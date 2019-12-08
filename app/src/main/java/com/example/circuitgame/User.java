@@ -7,6 +7,7 @@ class User{
 
     User(String username) {
         this.username = username;
+        ID = -1;
     }
 
     User(String[] fileLine) {

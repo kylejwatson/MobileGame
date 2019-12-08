@@ -1,6 +1,7 @@
 package com.example.circuitgame;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -16,27 +17,42 @@ class UserFile {
     static final char NEWLINE = '\n';
     private static final String FILE_NAME = "users.csv";
     static final String COMMA = ",";
-    static void saveToFile(Context context, List<User> users) {
+    private List<User> users;
+    private static UserFile instance;
+    private User currentUser;
+
+    private UserFile(Context context) {
+        users = new ArrayList<>();
+        readFromFile(context);
+        currentUser = getUser(context, users.size() == 0 ? 0 : users.size() - 1);
+    }
+
+    static UserFile getInstance(Context context) {
+        if (instance == null) instance = new UserFile(context);
+        return instance;
+    }
+
+    void saveToFile(Context context) {
         StringBuilder builder = new StringBuilder();
 
-        for (User user: users)
+        for (User user : users)
             builder.append(user.toCSV());
-        if (builder.length() > 0 && builder.charAt(builder.length()-1) == NEWLINE)
-            builder.deleteCharAt(builder.length()-1);
-        Log.d("ID","file dir = " + context.getFilesDir());
-        Log.d("ID","file contents = " + builder);
+        if (builder.length() > 0 && builder.charAt(builder.length() - 1) == NEWLINE)
+            builder.deleteCharAt(builder.length() - 1);
+        Log.d("ID", "file dir = " + context.getFilesDir());
+        Log.d("ID", "file contents = " + builder);
         try {
             File fp = new File(context.getFilesDir(), FILE_NAME);
             FileWriter out = new FileWriter(fp);
             out.write(builder.toString());
             out.close();
         } catch (IOException e) {
-            Log.d("Me","file error:" + e);
+            Log.d("Me", "file error:" + e);
         }
     }
-    static List<User> readFromFile(Context context) {
+
+    private void readFromFile(Context context) {
         BufferedReader in;
-        List<User> users = new ArrayList<>();
         try {
             File fp = new File(context.getFilesDir(), FILE_NAME);
             in = new BufferedReader(new FileReader(fp));
@@ -49,6 +65,34 @@ class UserFile {
         } catch (IOException e) {
             Log.d("ID", e.getMessage());
         }
+    }
+
+    private User getUser(Context context, int i) {
+        if (users.size() <= i) {
+            //start create user page
+            context.startActivity(new Intent(context, UserActivity.class));
+            return new User("No Profile");
+        }
+        return users.get(i);
+    }
+
+    void addUser(User user) {
+        int max = 0;
+        for (User u : users) {
+            if (u.getID() >= max) {
+                max = u.getID() + 1;
+            }
+        }
+        user.setID(max);
+        users.add(user);
+        currentUser = user;
+    }
+
+    User getCurrentUser() {
+        return currentUser;
+    }
+
+    List<User> getUserList() {
         return users;
     }
 }

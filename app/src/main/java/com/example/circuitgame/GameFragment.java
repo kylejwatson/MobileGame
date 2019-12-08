@@ -7,22 +7,24 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 
 /**
  * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link GameFragment.OnGameFragmentInteractionListener} interface
  * to handle interaction events.
  */
 public class GameFragment extends Fragment {
-
-    private OnGameFragmentInteractionListener mListener;
+    private int currentScore;
+    private TextView scoreLabel;
+    private NavController navController;
 
     public GameFragment() {
         // Required empty public constructor
@@ -38,47 +40,29 @@ public class GameFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        GameView gameView = new GameView(getContext());
+
+        navController = Navigation.findNavController(view);
+        GameView gameView = new GameView(getContext(), new GameView.ScoreChangeListener() {
+            @Override
+            public void scoreChanged(int difference) {
+                currentScore += difference;
+                scoreLabel.setText("Score: " + currentScore);
+            }
+        }, new GameView.GameEndListener() {
+            @Override
+            public void gameEnded(boolean win) {
+                if (win) win();
+            }
+        });
         FrameLayout frameLayout = view.findViewById(R.id.gameFrame);
         frameLayout.addView(gameView);
+        scoreLabel = view.findViewById(R.id.scoreLabel);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onGameFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnGameFragmentInteractionListener) {
-            mListener = (OnGameFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnGameFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnGameFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onGameFragmentInteraction(Uri uri);
+    private void win() {
+        User currentUser = UserFile.getInstance(getContext()).getCurrentUser();
+        if (currentUser.getScore() < currentScore) currentUser.setScore(currentScore);
+        navController.navigate(R.id.action_gameFragment_to_leaderboardFragment);
     }
 }

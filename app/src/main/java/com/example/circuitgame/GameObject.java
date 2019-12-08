@@ -1,6 +1,8 @@
 package com.example.circuitgame;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 
 import androidx.annotation.NonNull;
@@ -34,6 +36,11 @@ class Vector2D {
     public Vector2D multiply(double scale) {
         return new Vector2D(x * (float)scale, y * (float)scale);
     }
+
+    @Override
+    public String toString(){
+        return "X: " + x + " Y: " + y;
+    }
 }
 
 public class GameObject {
@@ -41,16 +48,37 @@ public class GameObject {
     private float width;
     private float height;
     private Drawable image;
+    private Paint paint = new Paint();
+
 
     public GameObject(Drawable image, Vector2D position) {
         this.position = position.clone();
         this.image = image;
         width = image.getIntrinsicWidth();
         height = image.getIntrinsicHeight();
+        paint.setColor(Color.RED);
     }
 
     public void draw(Canvas canvas) {
+        canvas.drawRect(position.x, position.y, position.x + width, position.y + height, paint);
         image.setBounds((int) position.x, (int) position.y, (int) (position.x + width), (int) (position.y + height));
         image.draw(canvas);
     }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public void setWidth(float width) {
+        this.width = width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
+    public void setHeight(float height) {
+        this.height = height;
+    }
 }
+

@@ -23,19 +23,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameView extends SurfaceView {
-    private static final int TICK = 1000/120;
+
+    private final ScoreChangeListener scoreListener;
+
+    public interface ScoreChangeListener{
+        void scoreChanged (int difference);
+    }
+
+    private final GameEndListener endListener;
+
+    public interface  GameEndListener{
+        void gameEnded (boolean win);
+    }
+
     private final float pixelsToMetres;
     SurfaceHolder surfaceHolder;
     Thread drawThread;
     Thread physicsThread;
     boolean isRunning = true;
     long previousTime;
+    long previousTouch;
     SensorManager sensorManager;
     Sensor sensor;
 
     List<GameObject> objects;
-    Paint white;
+    private final Paint white;
+    private final Paint black;
     Vector2D gravity;
+
+    private int objectives = 1;
 
     Runnable drawRunnable = new Runnable() {
         @Override
@@ -61,34 +77,70 @@ public class GameView extends SurfaceView {
             while (isRunning) {
                 long currentTime = System.currentTimeMillis();
                 float changeInTime = (currentTime - previousTime);
-//                if (changeInTime < TICK)
-//                    continue;
 
                 previousTime = currentTime;
 
 
                 for (int i = 0; i < objects.size(); i++) {
                     GameObject object = objects.get(i);
-                    if (object instanceof PhysicsObject)
-                        ((PhysicsObject) object).update(pixelsToMetres * changeInTime/1000f);
+                    if (object instanceof PhysicsObject) {
+                        ((PhysicsObject) object).update(pixelsToMetres * changeInTime / 1000f);
+                        for (int j = 0; j < objects.size(); j++) {
+                            GameObject otherObject = objects.get(j);
+                            if (j == i || !(otherObject instanceof PhysicsObject)) continue;
+                            ((PhysicsObject) object).checkCollision((PhysicsObject)otherObject, pixelsToMetres * changeInTime / 1000f);
+                        }
+                    }
                 }
             }
         }
     };
 
-    public GameView(final Context context) {
+    public GameView(final Context context, final ScoreChangeListener scoreListener, final GameEndListener endListener) {
         super(context);
+        this.scoreListener = scoreListener;
+        this.endListener = endListener;
         objects = new ArrayList<>();
         surfaceHolder = getHolder();
         white = new Paint();
         white.setColor(Color.WHITE);
-        Vector2D position = new Vector2D(1000, 1800);
+        black = new Paint();
+        black.setColor(Color.BLACK);
+        Vector2D position = new Vector2D(1000, 1400);
         gravity = new Vector2D(0, 0);
         DisplayMetrics metrics = new DisplayMetrics();
         ((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(metrics);
         pixelsToMetres = metrics.densityDpi * 39.37008f;
 
+        PhysicsObject top = new PhysicsObject(ContextCompat.getDrawable(context, R.drawable.square), new Vector2D(0, 0), false);
+        top.setWidth(position.x);
+        PhysicsObject bottom = new PhysicsObject(ContextCompat.getDrawable(context, R.drawable.square), new Vector2D(0, position.y), false);
+        bottom.setWidth(position.x);
+        PhysicsObject left = new PhysicsObject(ContextCompat.getDrawable(context, R.drawable.square), new Vector2D(0, 0), false);
+        left.setHeight(position.y);
+        PhysicsObject right = new PhysicsObject(ContextCompat.getDrawable(context, R.drawable.square), new Vector2D(position.x, 0), false);
+        right.setHeight(position.y);
 
+        objects.add(top);
+        objects.add(bottom);
+        objects.add(left);
+        objects.add(right);
+
+        PhysicsObject battery = new PhysicsObject(ContextCompat.getDrawable(context, R.drawable.battery), position.multiply(0.5f), true){
+            @Override
+            protected void trigger(PhysicsObject other, float changeInTime){
+                ((Activity) context).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        scoreListener.scoreChanged(100);
+                        collectObjective();
+                        Log.d("UI", "thread");
+                    }
+                });
+                objects.remove(this);
+            }
+        };
+        objects.add(battery);
 
         for (int i = 0; i < 1; i++) {
             PhysicsObject physicsObject = new PhysicsObject(
@@ -106,7 +158,7 @@ public class GameView extends SurfaceView {
         sensorManager.registerListener(new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent event) {
-                Log.d("GRAV", "x: " + event.values[0] + " y: " + event.values[1]);
+                //Log.d("GRAV", "x: " + event.values[0] + " y: " + event.values[1]);
                 gravity.x = -event.values[0];
                 gravity.y = event.values[1];
             }
@@ -120,6 +172,12 @@ public class GameView extends SurfaceView {
         OnTouchListener touchListener = new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+
+                long currentTime = System.currentTimeMillis();
+                float changeInTime = (currentTime - previousTouch);
+
+                if (changeInTime < 100) return true;
+                previousTouch = currentTime;
                 Vector2D touch = new Vector2D(event.getX(), event.getY());
                 PhysicsObject physicsObject = new PhysicsObject(
                         ContextCompat.getDrawable(context, R.drawable.square),
@@ -138,5 +196,13 @@ public class GameView extends SurfaceView {
         drawThread.start();
         physicsThread = new Thread(physicsRunnable);
         physicsThread.start();
+    }
+
+    private void collectObjective() {
+        objectives--;
+        Log.d("COLLECT", "" + objectives);
+        if (objectives <= 0) {
+            endListener.gameEnded(true);
+        }
     }
 }

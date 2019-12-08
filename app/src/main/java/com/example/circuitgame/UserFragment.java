@@ -69,24 +69,24 @@ public class UserFragment extends Fragment {
                 onUserSelected(user);
             }
         });
-        Button loadProfileButton = view.findViewById(R.id.loadButton);
-        loadProfileButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                users.clear();
-                users.addAll(UserFile.readFromFile(context));
-                adapter.notifyDataSetChanged();
-            }
-        });
-        Button wipeProfileButton = view.findViewById(R.id.deleteButton);
-        wipeProfileButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                users.clear();
-                UserFile.saveToFile(context, users);
-                adapter.notifyDataSetChanged();
-            }
-        });
+//        Button loadProfileButton = view.findViewById(R.id.loadButton);
+//        loadProfileButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                users.clear();
+//                users.addAll(UserFile.readFromFile(context));
+//                adapter.notifyDataSetChanged();
+//            }
+//        });
+//        Button wipeProfileButton = view.findViewById(R.id.deleteButton);
+//        wipeProfileButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                users.clear();
+//                UserFile.saveToFile(context, users);
+//                adapter.notifyDataSetChanged();
+//            }
+//        });
 
     }
 
@@ -101,7 +101,7 @@ public class UserFragment extends Fragment {
         user.setID(users.size());
         users.add(user);
         adapter.notifyDataSetChanged();
-        UserFile.saveToFile(getContext(), users);
+//        UserFile.saveToFile(getContext(), users);
         onUserSelected(user);
     }
 
@@ -109,7 +109,7 @@ public class UserFragment extends Fragment {
         if (mListener != null) {
             mListener.onUserFragmentInteraction(user);
         }
-        navController.navigate(R.id.action_userFragment_to_gameFragment);
+//        navController.navigate(R.id.action_userFragment_to_gameFragment);
     }
 
     @Override

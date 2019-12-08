@@ -3,20 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/userFragment">
+    app:startDestination="@id/titleFragment">
 
     <fragment
-        android:id="@+id/userFragment"
-        android:name="com.example.circuitgame.UserFragment"
-        android:label="fragment_user"
-        tools:layout="@layout/fragment_user" >
+        android:id="@+id/titleFragment"
+        android:name="com.example.circuitgame.TitleFragment"
+        android:label="fragment_title"
+        tools:layout="@layout/fragment_title" >
         <action
-            android:id="@+id/action_userFragment_to_leaderboardFragment"
-            app:destination="@id/leaderboardFragment" />
-        <action
-            android:id="@+id/action_userFragment_to_gameFragment"
+            android:id="@+id/action_titleFragment_to_gameFragment"
             app:destination="@id/gameFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/leaderboardFragment"
         android:name="com.example.circuitgame.LeaderboardFragment"
