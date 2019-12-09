@@ -25,6 +25,7 @@ import android.widget.TextView;
 public class TitleFragment extends Fragment {
 
     private TextView username;
+    private TextView score;
 
     public TitleFragment() {
         // Required empty public constructor
@@ -50,8 +51,9 @@ public class TitleFragment extends Fragment {
         LayoutInflater inflater =
                 (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (inflater == null) return;
-        View userView = inflater.inflate(R.layout.fragment_score, frameLayout, true);
+        View userView = inflater.inflate(R.layout.cell_score, frameLayout, true);
         username = userView.findViewById(R.id.userName);
+        score = userView.findViewById(R.id.score);
         displayCurrentUser();
 
         final NavController navController = Navigation.findNavController(view);
@@ -81,5 +83,6 @@ public class TitleFragment extends Fragment {
     private void displayCurrentUser(){
         User currentUser = UserFile.getInstance(getContext()).getCurrentUser();
         username.setText(currentUser.getUsername());
+        score.setText("PB: " + currentUser.getScore());
     }
 }

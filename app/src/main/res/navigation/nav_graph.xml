@@ -19,7 +19,14 @@
         android:id="@+id/leaderboardFragment"
         android:name="com.example.circuitgame.LeaderboardFragment"
         android:label="fragment_score_list"
-        tools:layout="@layout/fragment_score_list" />
+        tools:layout="@layout/fragment_leaderboard" >
+        <action
+            android:id="@+id/action_leaderboardFragment_to_gameFragment"
+            app:destination="@id/gameFragment" />
+        <action
+            android:id="@+id/action_leaderboardFragment_to_titleFragment"
+            app:destination="@id/titleFragment" />
+    </fragment>
     <fragment
         android:id="@+id/gameFragment"
         android:name="com.example.circuitgame.GameFragment"

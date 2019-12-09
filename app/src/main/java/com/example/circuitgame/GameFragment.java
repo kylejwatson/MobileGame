@@ -1,7 +1,5 @@
 package com.example.circuitgame;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +33,14 @@ public class GameFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_game, container, false);
+        Log.d("CREATE", "onCreate");
+        View view = inflater.inflate(R.layout.fragment_game, container, false);
+
+        Log.d("CREATE", "after inflate");
+        FrameLayout frameLayout = view.findViewById(R.id.gameFrame);
+        frameLayout.removeAllViews();
+        Log.d("CREATE", "after remove");
+        return view;
     }
 
     @Override
@@ -42,7 +48,7 @@ public class GameFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         navController = Navigation.findNavController(view);
-        GameView gameView = new GameView(getContext(), new GameView.ScoreChangeListener() {
+        GameView gameView = GameView.getInstance(getContext(), new GameView.ScoreChangeListener() {
             @Override
             public void scoreChanged(int difference) {
                 currentScore += difference;
@@ -54,12 +60,15 @@ public class GameFragment extends Fragment {
                 if (win) win();
             }
         });
+
+        Log.d("CREATE", "after new game");
         FrameLayout frameLayout = view.findViewById(R.id.gameFrame);
         frameLayout.addView(gameView);
+        Log.d("CREATE", "after added");
         scoreLabel = view.findViewById(R.id.scoreLabel);
+        currentScore = 0;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     private void win() {
         User currentUser = UserFile.getInstance(getContext()).getCurrentUser();
         if (currentUser.getScore() < currentScore) currentUser.setScore(currentScore);

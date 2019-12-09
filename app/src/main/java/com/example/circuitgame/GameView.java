@@ -24,6 +24,7 @@ import java.util.List;
 
 public class GameView extends SurfaceView {
 
+    private static GameView instance;
     private final ScoreChangeListener scoreListener;
 
     public interface ScoreChangeListener{
@@ -96,7 +97,13 @@ public class GameView extends SurfaceView {
         }
     };
 
-    public GameView(final Context context, final ScoreChangeListener scoreListener, final GameEndListener endListener) {
+    public static GameView getInstance(final Context context, final ScoreChangeListener scoreListener, final GameEndListener endListener){
+        if (instance != null) instance.stop();
+        instance = new GameView(context, scoreListener, endListener);
+        return instance;
+    }
+
+    private GameView(final Context context, final ScoreChangeListener scoreListener, final GameEndListener endListener) {
         super(context);
         this.scoreListener = scoreListener;
         this.endListener = endListener;
@@ -198,11 +205,16 @@ public class GameView extends SurfaceView {
         physicsThread.start();
     }
 
+    public void stop(){
+        isRunning = false;
+    }
+
     private void collectObjective() {
         objectives--;
         Log.d("COLLECT", "" + objectives);
         if (objectives <= 0) {
             endListener.gameEnded(true);
+            stop();
         }
     }
 }

@@ -25,7 +25,7 @@ public class ScoreRecyclerViewAdapter extends RecyclerView.Adapter<ScoreRecycler
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_score, parent, false);
+                .inflate(R.layout.cell_score, parent, false);
         currentID = UserFile.getInstance(parent.getContext()).getCurrentUser().getID();
         return new ViewHolder(view);
     }
