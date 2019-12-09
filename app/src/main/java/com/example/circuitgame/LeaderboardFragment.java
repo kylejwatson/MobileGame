@@ -43,7 +43,7 @@ public class LeaderboardFragment extends Fragment {
         Context context = view.getContext();
         RecyclerView recyclerView = view.findViewById(R.id.scoreList);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerView.setAdapter(new ScoreRecyclerViewAdapter(UserFile.getInstance(context).getUserList()));
+        recyclerView.setAdapter(new ScoreRecyclerViewAdapter(UserFile.getInstance(context).getUserList(), null));
         final NavController navController = Navigation.findNavController(view);
         Button playAgain = view.findViewById(R.id.againButton);
         playAgain.setOnClickListener(new View.OnClickListener() {

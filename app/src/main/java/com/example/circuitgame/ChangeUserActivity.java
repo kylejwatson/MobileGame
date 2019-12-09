@@ -1,0 +1,65 @@
+package com.example.circuitgame;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Debug;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class ChangeUserActivity extends AppCompatActivity {
+    private ScoreRecyclerViewAdapter adapter;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_change_user);
+
+        Button select = findViewById(R.id.selectButton);
+        select.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        Button editUser = findViewById(R.id.editButton);
+        editUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO add extras to edit user
+                startActivity(new Intent(ChangeUserActivity.this, UserActivity.class));
+            }
+        });
+        Button addUser = findViewById(R.id.addButton);
+        addUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ChangeUserActivity.this, UserActivity.class));
+            }
+        });
+
+        RecyclerView recyclerView = findViewById(R.id.userList);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new ScoreRecyclerViewAdapter(UserFile.getInstance(this).getUserList(), new ScoreRecyclerViewAdapter.UserClickListener() {
+            @Override
+            public void userOnClick(int i) {
+                UserFile.getInstance(ChangeUserActivity.this).selectCurrentUser(i);
+                adapter.notifyDataSetChanged();
+                Log.d("USER", "user" + UserFile.getInstance(ChangeUserActivity.this).getCurrentUser().getID());
+            }
+        });
+        recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        adapter.notifyDataSetChanged();
+    }
+}

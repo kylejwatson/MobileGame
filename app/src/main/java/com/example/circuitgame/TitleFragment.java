@@ -53,7 +53,7 @@ public class TitleFragment extends Fragment {
         singleUser = new ArrayList<>();
         RecyclerView recyclerView = view.findViewById(R.id.singleUserList);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        adapter = new ScoreRecyclerViewAdapter(singleUser);
+        adapter = new ScoreRecyclerViewAdapter(singleUser, null);
         recyclerView.setAdapter(adapter);
         displayCurrentUser();
 
@@ -70,7 +70,7 @@ public class TitleFragment extends Fragment {
         changeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                context.startActivity(new Intent(context, UserActivity.class));
+                context.startActivity(new Intent(context, ChangeUserActivity.class));
             }
         });
     }

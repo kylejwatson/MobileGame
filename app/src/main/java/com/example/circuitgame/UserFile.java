@@ -99,6 +99,10 @@ class UserFile {
         currentUser = user;
     }
 
+    void selectCurrentUser(int i){
+        currentUser = users.get(i);
+    }
+
     User getCurrentUser() {
         return currentUser;
     }
