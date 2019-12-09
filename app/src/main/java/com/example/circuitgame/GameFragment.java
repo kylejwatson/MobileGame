@@ -23,7 +23,9 @@ import android.widget.TextView;
 public class GameFragment extends Fragment {
     private int currentScore;
     private TextView scoreLabel;
+    private TextView objectiveLabel;
     private NavController navController;
+    private Objective currentObjective;
 
     public GameFragment() {
         // Required empty public constructor
@@ -33,13 +35,10 @@ public class GameFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        Log.d("CREATE", "onCreate");
         View view = inflater.inflate(R.layout.fragment_game, container, false);
 
-        Log.d("CREATE", "after inflate");
         FrameLayout frameLayout = view.findViewById(R.id.gameFrame);
         frameLayout.removeAllViews();
-        Log.d("CREATE", "after remove");
         return view;
     }
 
@@ -47,26 +46,40 @@ public class GameFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        currentScore = 0;
+        scoreLabel = view.findViewById(R.id.scoreLabel);
+        objectiveLabel = view.findViewById(R.id.nextText);
         navController = Navigation.findNavController(view);
-        GameView gameView = GameView.getInstance(getContext(), new GameView.ScoreChangeListener() {
+        GameView gameView = GameView.getInstance(getContext(), new GameView.ObjectiveListener() {
             @Override
-            public void scoreChanged(int difference) {
-                currentScore += difference;
+            public void objectiveReached(Objective objective) {
+                if (currentObjective == null){
+                    currentObjective = objective;
+                    objectiveLabel.setText(currentObjective.getName());
+                    return;
+                }
+                if (!objective.equals(currentObjective)) {
+                    lose();
+                    return;
+                }
+                currentScore += 100;
                 scoreLabel.setText("Score: " + currentScore);
-            }
-        }, new GameView.GameEndListener() {
-            @Override
-            public void gameEnded(boolean win) {
-                if (win) win();
+                if (objective.getNextObjective() == null) {
+                    win();
+                    return;
+                }
+                currentObjective = objective.getNextObjective();
+                objectiveLabel.setText(currentObjective.getName());
             }
         });
 
-        Log.d("CREATE", "after new game");
         FrameLayout frameLayout = view.findViewById(R.id.gameFrame);
         frameLayout.addView(gameView);
-        Log.d("CREATE", "after added");
-        scoreLabel = view.findViewById(R.id.scoreLabel);
-        currentScore = 0;
+    }
+
+    private void lose() {
+        // TODO make proper lose screen/make leaderboard show lose or win
+        objectiveLabel.setText("LOSE");
     }
 
     private void win() {

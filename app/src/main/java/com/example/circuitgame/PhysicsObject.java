@@ -1,35 +1,36 @@
 package com.example.circuitgame;
 
-import android.graphics.drawable.Drawable;
-import android.util.Log;
-
 public class PhysicsObject extends GameObject {
     private static final float SCALE = 0.000001f;
 
-    public Vector2D gravity = new Vector2D(0,0);
-    private Vector2D velocity = new Vector2D(0, 0);
+    private Vector2D gravity = Vector2D.ZERO.clone();
+    private Vector2D velocity = Vector2D.ZERO.clone();
     private float friction;
     private float bounciness;
     private boolean kinematic = false;
     private boolean isTrigger = false;
 
-    public PhysicsObject(Drawable image, Vector2D position, float friction, float bounciness, Vector2D velocity) {
-        super(image, position);
+    public PhysicsObject(DrawObject drawObject, Vector2D position, float friction, float bounciness, Vector2D velocity) {
+        super(drawObject, position);
         this.friction = friction/100 + 1;
         this.bounciness = bounciness;
         this.velocity = velocity.clone();
     }
 
-    public PhysicsObject(Drawable image, Vector2D position, float friction, float bounciness) {
-        super(image, position);
+    public PhysicsObject(DrawObject drawObject, Vector2D position, float friction, float bounciness) {
+        super(drawObject, position);
         this.friction = friction/100 + 1;
         this.bounciness = bounciness;
     }
 
-    public PhysicsObject(Drawable image, Vector2D position, boolean isTrigger){
-        super(image, position);
+    public PhysicsObject(DrawObject drawObject, Vector2D position, boolean isTrigger){
+        super(drawObject, position);
         kinematic = true;
         this.isTrigger = isTrigger;
+    }
+
+    public void setGravity(Vector2D gravity) {
+        this.gravity = gravity;
     }
 
     public void update(float changeInTime){
@@ -66,6 +67,7 @@ public class PhysicsObject extends GameObject {
     }
 
     private boolean collides(PhysicsObject otherObject){
+        //TODO use rect as it has intersection detection
         boolean leftOverlap = position.x > otherObject.position.x && position.x < otherObject.getRight();
         boolean rightOverlap = getRight() > otherObject.position.x && getRight() < otherObject.getRight();
         boolean topOverlap = position.y > otherObject.position.y && position.y < otherObject.getBottom();
@@ -82,5 +84,10 @@ public class PhysicsObject extends GameObject {
 
     protected void trigger(PhysicsObject other, float changeInTime){
         //
+    }
+
+    @Override
+    public String toString(){
+        return "Pos: " + position + "\nVel: " + velocity + "\nGrav: " + gravity;
     }
 }

@@ -2,170 +2,129 @@ package com.example.circuitgame;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 
 import androidx.core.content.ContextCompat;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameView extends SurfaceView {
 
     private static GameView instance;
-    private final ScoreChangeListener scoreListener;
 
-    public interface ScoreChangeListener{
-        void scoreChanged (int difference);
-    }
-
-    private final GameEndListener endListener;
-
-    public interface  GameEndListener{
-        void gameEnded (boolean win);
+    public interface ObjectiveListener {
+        void objectiveReached(Objective objective);
     }
 
     private final float pixelsToMetres;
-    SurfaceHolder surfaceHolder;
-    Thread drawThread;
-    Thread physicsThread;
-    boolean isRunning = true;
-    long previousTime;
-    long previousTouch;
-    SensorManager sensorManager;
-    Sensor sensor;
+    private SurfaceHolder surfaceHolder;
+    private boolean isRunning = true;
 
-    List<GameObject> objects;
-    private final Paint white;
-    private final Paint black;
-    Vector2D gravity;
+    private List<GameObject> objects;
+    private Vector2D gravity;
 
-    private int objectives = 1;
-
-    Runnable drawRunnable = new Runnable() {
-        @Override
-        public void run() {
-            while (isRunning) {
-                if (!surfaceHolder.getSurface().isValid())
-                    continue;
-                Canvas canvas = surfaceHolder.lockCanvas();
-                if (canvas == null)
-                    continue;
-                canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), white);
-                for (int i = 0; i < objects.size(); i++) {
-                    objects.get(i).draw(canvas);
-                }
-                surfaceHolder.unlockCanvasAndPost(canvas);
-            }
-        }
-    };
-
-    Runnable physicsRunnable = new Runnable() {
-        @Override
-        public void run() {
-            while (isRunning) {
-                long currentTime = System.currentTimeMillis();
-                float changeInTime = (currentTime - previousTime);
-
-                previousTime = currentTime;
-
-
-                for (int i = 0; i < objects.size(); i++) {
-                    GameObject object = objects.get(i);
-                    if (object instanceof PhysicsObject) {
-                        ((PhysicsObject) object).update(pixelsToMetres * changeInTime / 1000f);
-                        for (int j = 0; j < objects.size(); j++) {
-                            GameObject otherObject = objects.get(j);
-                            if (j == i || !(otherObject instanceof PhysicsObject)) continue;
-                            ((PhysicsObject) object).checkCollision((PhysicsObject)otherObject, pixelsToMetres * changeInTime / 1000f);
-                        }
-                    }
-                }
-            }
-        }
-    };
-
-    public static GameView getInstance(final Context context, final ScoreChangeListener scoreListener, final GameEndListener endListener){
+    public static GameView getInstance(final Context context, final ObjectiveListener objectiveListener) {
         if (instance != null) instance.stop();
-        instance = new GameView(context, scoreListener, endListener);
+        instance = new GameView(context, objectiveListener);
         return instance;
     }
 
-    private GameView(final Context context, final ScoreChangeListener scoreListener, final GameEndListener endListener) {
+    private GameView(final Context context, final ObjectiveListener objectiveListener) {
         super(context);
-        this.scoreListener = scoreListener;
-        this.endListener = endListener;
-        objects = new ArrayList<>();
         surfaceHolder = getHolder();
-        white = new Paint();
-        white.setColor(Color.WHITE);
-        black = new Paint();
-        black.setColor(Color.BLACK);
-        Vector2D position = new Vector2D(1000, 1400);
-        gravity = new Vector2D(0, 0);
+
         DisplayMetrics metrics = new DisplayMetrics();
-        ((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(metrics);
         pixelsToMetres = metrics.densityDpi * 39.37008f;
 
-        PhysicsObject top = new PhysicsObject(ContextCompat.getDrawable(context, R.drawable.square), new Vector2D(0, 0), false);
-        top.setWidth(position.x);
-        PhysicsObject bottom = new PhysicsObject(ContextCompat.getDrawable(context, R.drawable.square), new Vector2D(0, position.y), false);
-        bottom.setWidth(position.x);
-        PhysicsObject left = new PhysicsObject(ContextCompat.getDrawable(context, R.drawable.square), new Vector2D(0, 0), false);
-        left.setHeight(position.y);
-        PhysicsObject right = new PhysicsObject(ContextCompat.getDrawable(context, R.drawable.square), new Vector2D(position.x, 0), false);
-        right.setHeight(position.y);
+        objects = new ArrayList<>();
+        gravity = Vector2D.ZERO.clone();
+        attachGravitySensor(context);
 
-        objects.add(top);
-        objects.add(bottom);
-        objects.add(left);
-        objects.add(right);
+        Vector2D position = new Vector2D(1000, 1400);
+        DrawObject profile = getProfile(context);
 
-        PhysicsObject battery = new PhysicsObject(ContextCompat.getDrawable(context, R.drawable.battery), position.multiply(0.5f), true){
+        Level.ObjectiveEvent event = new Level.ObjectiveEvent() {
             @Override
-            protected void trigger(PhysicsObject other, float changeInTime){
+            public void trigger(final Objective objective) {
+                if (objective.getNextObjective() == null) stop();
                 ((Activity) context).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        scoreListener.scoreChanged(100);
-                        collectObjective();
-                        Log.d("UI", "thread");
+                        objectiveListener.objectiveReached(objective);
                     }
                 });
-                objects.remove(this);
+                objects.remove(objective);
             }
         };
-        objects.add(battery);
 
-        for (int i = 0; i < 1; i++) {
-            PhysicsObject physicsObject = new PhysicsObject(
-                    ContextCompat.getDrawable(context, R.drawable.square),
-                    position.multiply(Math.random()),
-                    (float) Math.random(),
-                    (float) Math.random() * 0.8f);
-            physicsObject.gravity = gravity;
-            objects.add(physicsObject);
+        Level level1 = new Level(Color.RED, event, gravity);
+        level1.addWall(Vector2D.ZERO, 10, position.y);
+        level1.addWall(Vector2D.ZERO, position.x, 10);
+        level1.addWall(new Vector2D(position.x, 0), 10, position.y);
+        level1.addWall(new Vector2D(0, position.y), position.x, 10);
+        level1.addWall(new Vector2D(position.x / 2, position.y/2), 10, position.y/2);
+        level1.addObjective("Cell", new DrawObject(ContextCompat.getDrawable(context, R.drawable.battery)), new Vector2D(position.x * 0.2f, position.y * 0.8f));
+        level1.addObjective("Bulb", new DrawObject(ContextCompat.getDrawable(context, R.drawable.bulb)), new Vector2D(position.x * 0.8f, position.y * 0.8f));
+        PhysicsObject character = new PhysicsObject(profile,new Vector2D(position.x / 2, position.y/4), 0.5f, 0.5f){
+            @Override
+            public void update(float changeInTime) {
+                super.update(changeInTime);
+                Log.d("CHAR", this.toString());
+            }
+        };
+        level1.addPhysicsObject(character);
+        level1.loadLevel(objects);
+        objectiveListener.objectiveReached(level1.getFirstObjective());
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                drawScene();
+            }
+        }).start();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                updateScene();
+            }
+        }).start();
+    }
+
+    private DrawObject getProfile(Context context) {
+        Bitmap bitmap = null;
+        try {
+            bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), UserFile.getInstance(context).getCurrentUser().getUri());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        if (bitmap == null) return new DrawObject(ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground));
+        return new DrawObject(Bitmap.createScaledBitmap(bitmap, 100, 100, false));
+    }
 
-        sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+    private void attachGravitySensor(Context context) {
+        SensorManager sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
 
         sensorManager.registerListener(new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent event) {
-                //Log.d("GRAV", "x: " + event.values[0] + " y: " + event.values[1]);
                 gravity.x = -event.values[0];
                 gravity.y = event.values[1];
             }
@@ -175,46 +134,49 @@ public class GameView extends SurfaceView {
 
             }
         }, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+    }
 
-        OnTouchListener touchListener = new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
+    private void updateScene() {
+        long previousTime = System.currentTimeMillis();
+        while (isRunning) {
+            long currentTime = System.currentTimeMillis();
+            float changeInTime = (currentTime - previousTime);
 
-                long currentTime = System.currentTimeMillis();
-                float changeInTime = (currentTime - previousTouch);
+            previousTime = currentTime;
 
-                if (changeInTime < 100) return true;
-                previousTouch = currentTime;
-                Vector2D touch = new Vector2D(event.getX(), event.getY());
-                PhysicsObject physicsObject = new PhysicsObject(
-                        ContextCompat.getDrawable(context, R.drawable.square),
-                        touch,
-                        (float) Math.random(),
-                        (float) Math.random() * 0.8f);
-                physicsObject.gravity = gravity;
-                objects.add(physicsObject);
-                return true;
+            for (int i = 0; i < objects.size(); i++) {
+                GameObject object = objects.get(i);
+                if (object instanceof PhysicsObject) {
+                    ((PhysicsObject) object).update(pixelsToMetres * changeInTime / 1000f);
+                    for (int j = 0; j < objects.size(); j++) {
+                        GameObject otherObject = objects.get(j);
+                        if (j == i || !(otherObject instanceof PhysicsObject)) continue;
+                        ((PhysicsObject) object).checkCollision((PhysicsObject) otherObject, pixelsToMetres * changeInTime / 1000f);
+                    }
+                }
             }
-        };
-
-        setOnTouchListener(touchListener);
-        previousTime = System.currentTimeMillis();
-        drawThread = new Thread(drawRunnable);
-        drawThread.start();
-        physicsThread = new Thread(physicsRunnable);
-        physicsThread.start();
-    }
-
-    public void stop(){
-        isRunning = false;
-    }
-
-    private void collectObjective() {
-        objectives--;
-        Log.d("COLLECT", "" + objectives);
-        if (objectives <= 0) {
-            endListener.gameEnded(true);
-            stop();
         }
+    }
+
+    private void drawScene() {
+        Paint white = new Paint();
+        white.setColor(Color.WHITE);
+        while (isRunning) {
+            if (!surfaceHolder.getSurface().isValid())
+                continue;
+            Canvas canvas = surfaceHolder.lockCanvas();
+            if (canvas == null)
+                continue;
+            canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), white);
+            for (int i = 0; i < objects.size(); i++) {
+                objects.get(i).draw(canvas);
+            }
+            surfaceHolder.unlockCanvasAndPost(canvas);
+        }
+    }
+
+
+    public void stop() {
+        isRunning = false;
     }
 }

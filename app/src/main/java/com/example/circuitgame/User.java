@@ -1,5 +1,6 @@
 package com.example.circuitgame;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 class User{
@@ -10,6 +11,7 @@ class User{
 
     User(String username) {
         this.username = username;
+        uri = Uri.EMPTY;
         ID = -1;
     }
 
@@ -61,5 +63,4 @@ class User{
     public String toString() {
         return username;
     }
-
 }
