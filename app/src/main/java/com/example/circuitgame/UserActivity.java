@@ -24,7 +24,9 @@ import java.util.Locale;
 
 public class UserActivity extends AppCompatActivity {
     private static final int REQUEST_CAPTURE_IMAGE = 100;
+    public static final String EDIT_USER_EXTRA = "maze_game_user";
     private ImageView profileImage;
+    private User user;
 
     Uri imageUri = Uri.EMPTY;
     private Uri createImageFile() throws IOException {
@@ -65,6 +67,11 @@ public class UserActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
+
+
+        final boolean edit = getIntent().getBooleanExtra(EDIT_USER_EXTRA, false);
+        user = new User("No Profile");
+
         final EditText username = findViewById(R.id.usernameText);
         profileImage = findViewById(R.id.profileImage);
         Button cameraButton = findViewById(R.id.cameraButton);
@@ -78,12 +85,21 @@ public class UserActivity extends AppCompatActivity {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                User user = new User(username.getText().toString());
-                user.setUri(imageUri);
-                UserFile.getInstance(UserActivity.this).addUser(user);
+                user.setUsername(username.getText().toString());
+                if (edit) UserFile.getInstance(UserActivity.this).editUser(user);
+                else UserFile.getInstance(UserActivity.this).addUser(user);
                 finish();
             }
         });
+
+        if (edit) {
+            user = UserFile.getInstance(this).getCurrentUser();
+            username.setText(user.getUsername());
+            if (!user.getUri().equals(Uri.EMPTY)) {
+                profileImage.setImageURI(user.getUri());
+            }
+            addButton.setText("Save User");
+        }
     }
 
     @Override
@@ -93,13 +109,14 @@ public class UserActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CAPTURE_IMAGE) {
             //don't compare the data to null, it will always come as  null because we are providing a file URI, so load with the imageFilePath we obtained before opening the cameraIntent
             profileImage.setImageURI(imageUri);
+            user.setUri(imageUri);
             // If you are using Glide.
         }
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onStop() {
         UserFile.getInstance(this).saveToFile(this);
-        super.onDestroy();
+        super.onStop();
     }
 }

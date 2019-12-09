@@ -32,8 +32,9 @@ public class ChangeUserActivity extends AppCompatActivity {
         editUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO add extras to edit user
-                startActivity(new Intent(ChangeUserActivity.this, UserActivity.class));
+                Intent intent = new Intent(ChangeUserActivity.this, UserActivity.class);
+                intent.putExtra(UserActivity.EDIT_USER_EXTRA, true);
+                startActivity(intent);
             }
         });
         Button addUser = findViewById(R.id.addButton);
@@ -61,5 +62,11 @@ public class ChangeUserActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onStop() {
+        UserFile.getInstance(this).saveToFile(this);
+        super.onStop();
     }
 }

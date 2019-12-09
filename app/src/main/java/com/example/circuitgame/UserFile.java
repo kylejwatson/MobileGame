@@ -110,4 +110,12 @@ class UserFile {
     List<User> getUserList() {
         return users;
     }
+
+    public void editUser(User user) {
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getID() == user.getID()) {
+                users.set(i, user);
+            }
+        }
+    }
 }

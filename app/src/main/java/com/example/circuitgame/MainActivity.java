@@ -13,8 +13,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onStop() {
         UserFile.getInstance(this).saveToFile(this);
-        super.onDestroy();
+        super.onStop();
     }
 }
