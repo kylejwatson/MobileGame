@@ -2,6 +2,7 @@ package com.example.circuitgame;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,9 @@ public class ScoreRecyclerViewAdapter extends RecyclerView.Adapter<ScoreRecycler
         User user = users.get(position);
         holder.username.setText(user.getUsername());
         holder.score.setText("PB: " + user.getScore());
+        if (!user.getUri().equals(Uri.EMPTY)) {
+            holder.profile.setImageURI(user.getUri());
+        }
         if(currentID == user.getID()) {
             holder.view.setBackgroundResource(R.color.colorSelect);
         }

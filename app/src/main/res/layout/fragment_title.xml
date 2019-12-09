@@ -32,8 +32,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleText" />
 
-    <FrameLayout
-        android:id="@+id/userFrame"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/singleUserList"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -41,15 +41,14 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
+        app:layoutManager="LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView">
+        app:layout_constraintTop_toBottomOf="@id/imageView"
+        tools:listitem="@layout/cell_score"
+        tools:itemCount="1">
 
-        <include layout="@layout/cell_score">
-
-        </include>
-
-    </FrameLayout>
+    </androidx.recyclerview.widget.RecyclerView>
 
     <Button
         android:id="@+id/playButton"
@@ -63,7 +62,7 @@
         android:text="Play"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userFrame" />
+        app:layout_constraintTop_toBottomOf="@+id/singleUserList" />
 
     <Button
         android:id="@+id/changeUser"

@@ -20,8 +20,19 @@ class UserFile {
     private List<User> users;
     private static UserFile instance;
     private User currentUser;
+    private boolean wipe = false;
 
     private UserFile(Context context) {
+        if (wipe) {
+            File fp = new File(context.getFilesDir(), FILE_NAME);
+            try {
+                FileWriter out = new FileWriter(fp);
+                out.write("");
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         users = new ArrayList<>();
         readFromFile(context);
         currentUser = getUser(context, users.size() == 0 ? 0 : users.size() - 1);

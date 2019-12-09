@@ -10,13 +10,19 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -24,9 +30,8 @@ import android.widget.TextView;
  */
 public class TitleFragment extends Fragment {
 
-    private TextView username;
-    private TextView score;
-
+    private List<User> singleUser;
+    private ScoreRecyclerViewAdapter adapter;
     public TitleFragment() {
         // Required empty public constructor
     }
@@ -45,15 +50,11 @@ public class TitleFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         final Context context = getContext();
         if (context == null) return;
-
-        FrameLayout frameLayout = view.findViewById(R.id.userFrame);
-        frameLayout.removeAllViews();
-        LayoutInflater inflater =
-                (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (inflater == null) return;
-        View userView = inflater.inflate(R.layout.cell_score, frameLayout, true);
-        username = userView.findViewById(R.id.userName);
-        score = userView.findViewById(R.id.score);
+        singleUser = new ArrayList<>();
+        RecyclerView recyclerView = view.findViewById(R.id.singleUserList);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        adapter = new ScoreRecyclerViewAdapter(singleUser);
+        recyclerView.setAdapter(adapter);
         displayCurrentUser();
 
         final NavController navController = Navigation.findNavController(view);
@@ -82,7 +83,8 @@ public class TitleFragment extends Fragment {
 
     private void displayCurrentUser(){
         User currentUser = UserFile.getInstance(getContext()).getCurrentUser();
-        username.setText(currentUser.getUsername());
-        score.setText("PB: " + currentUser.getScore());
+        singleUser.clear();
+        singleUser.add(currentUser);
+        adapter.notifyDataSetChanged();
     }
 }
