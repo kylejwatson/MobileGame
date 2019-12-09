@@ -43,23 +43,36 @@ class UserFile {
         return instance;
     }
 
-    void saveToFile(Context context) {
-        StringBuilder builder = new StringBuilder();
-
-        for (User user : users)
-            builder.append(user.toCSV());
-        if (builder.length() > 0 && builder.charAt(builder.length() - 1) == NEWLINE)
-            builder.deleteCharAt(builder.length() - 1);
-        Log.d("ID", "file dir = " + context.getFilesDir());
-        Log.d("ID", "file contents = " + builder);
-        try {
-            File fp = new File(context.getFilesDir(), FILE_NAME);
-            FileWriter out = new FileWriter(fp);
-            out.write(builder.toString());
-            out.close();
-        } catch (IOException e) {
-            Log.d("Me", "file error:" + e);
+    public class FileRunnable implements Runnable {
+        private Context context;
+        public FileRunnable(Context context){
+            this.context = context;
         }
+
+        @Override
+        public void run() {
+            StringBuilder builder = new StringBuilder();
+
+            for (User user : users)
+                builder.append(user.toCSV());
+            if (builder.length() > 0 && builder.charAt(builder.length() - 1) == NEWLINE)
+                builder.deleteCharAt(builder.length() - 1);
+            Log.d("ID", "file dir = " + context.getFilesDir());
+            Log.d("ID", "file contents = " + builder);
+            try {
+                File fp = new File(context.getFilesDir(), FILE_NAME);
+                FileWriter out = new FileWriter(fp);
+                out.write(builder.toString());
+                out.close();
+            } catch (IOException e) {
+                Log.d("Me", "file error:" + e);
+            }
+        }
+    }
+
+    void saveToFile(Context context) {
+        FileRunnable fileRunnable = new FileRunnable(context);
+        new Thread(fileRunnable).start();
     }
 
     private void readFromFile(Context context) {

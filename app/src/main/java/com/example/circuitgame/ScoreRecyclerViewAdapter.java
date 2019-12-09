@@ -2,7 +2,10 @@ package com.example.circuitgame;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,14 +39,30 @@ public class ScoreRecyclerViewAdapter extends RecyclerView.Adapter<ScoreRecycler
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        Log.d("ADAPTER", "bind" + position);
-        User user = users.get(position);
+        final User user = users.get(position);
         holder.username.setText(user.getUsername());
         holder.score.setText("PB: " + user.getScore());
         int currentID = UserFile.getInstance(holder.view.getContext()).getCurrentUser().getID();
-        if (!user.getUri().equals(Uri.EMPTY)) {
-            holder.profile.setImageURI(user.getUri());
-        }
+        Runnable imageRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (!user.getUri().equals(Uri.EMPTY)) {
+                    try {
+                        //TODO fix sideways loading
+                        final Bitmap bitmap = MediaStore.Images.Media.getBitmap(holder.view.getContext().getContentResolver(), user.getUri());
+                        ((Activity)holder.view.getContext()).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                holder.profile.setImageBitmap(bitmap);
+                            }
+                        });
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        new Thread(imageRunnable).start();
         holder.view.setBackgroundResource(currentID == user.getID() ? R.color.colorSelect : 0);
     }
 
