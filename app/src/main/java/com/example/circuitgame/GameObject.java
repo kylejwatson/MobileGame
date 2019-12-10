@@ -40,6 +40,10 @@ class Vector2D {
     public String toString(){
         return "X: " + x + " Y: " + y;
     }
+
+    public float length() {
+        return (float) Math.sqrt(x*x + y*y);
+    }
 }
 
 public class GameObject {

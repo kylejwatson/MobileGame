@@ -67,14 +67,14 @@ public class PhysicsObject extends GameObject {
         return getRect().intersect(otherObject.getRect());
     }
 
-    public void checkCollision(PhysicsObject otherObject, float changeInTime) {
-        if (kinematic) return;
-        if (!collides(otherObject)) return;
+    public boolean checkCollision(PhysicsObject otherObject, float changeInTime) {
+        if (kinematic || !collides(otherObject)) return false;
         if (!otherObject.isTrigger) {
             onCollide(otherObject, changeInTime);
-            return;
+            return true;
         }
         otherObject.trigger(this, changeInTime);
+        return false;
     }
 
     protected void trigger(PhysicsObject other, float changeInTime) {
@@ -84,5 +84,9 @@ public class PhysicsObject extends GameObject {
     @Override
     public String toString() {
         return "Pos: " + position + "\nVel: " + velocity + "\nGrav: " + gravity;
+    }
+
+    public float getSpeed() {
+        return velocity.length();
     }
 }

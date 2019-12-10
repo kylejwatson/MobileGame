@@ -13,6 +13,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.SoundPool;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -31,6 +32,8 @@ public class GameView extends SurfaceView {
     private static GameView instance;
     private boolean isPaused = false;
     private List<Level> levels;
+    private int collisionSound;
+    private final SoundPool soundPool;
 
     public boolean getPaused() {
         return isPaused;
@@ -40,7 +43,7 @@ public class GameView extends SurfaceView {
         void objectiveReached(Objective objective);
     }
 
-    private final float pixelsToMetres;
+    private float pixelsToMetres;
     private SurfaceHolder surfaceHolder;
     private boolean isRunning = true;
 
@@ -49,9 +52,9 @@ public class GameView extends SurfaceView {
     private Vector2D gravity;
     private int currentLevel = 0;
 
-    public static GameView getInstance(final Context context, final ObjectiveListener objectiveListener) {
+    public static GameView getInstance(final Context context, final ObjectiveListener objectiveListener, SoundPool soundPool) {
         if (instance != null) instance.stop();
-        instance = new GameView(context, objectiveListener);
+        instance = new GameView(context, objectiveListener, soundPool);
         return instance;
     }
 
@@ -59,13 +62,17 @@ public class GameView extends SurfaceView {
         return instance;
     }
 
-    private GameView(final Context context, final ObjectiveListener objectiveListener) {
+    private GameView(final Context context, final ObjectiveListener objectiveListener, SoundPool soundPool) {
         super(context);
         surfaceHolder = getHolder();
 
         DisplayMetrics metrics = new DisplayMetrics();
         ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(metrics);
         pixelsToMetres = metrics.densityDpi * 39.37008f;
+
+        this.soundPool = soundPool;
+        collisionSound = soundPool.load(getContext(), R.raw.foot1, 1);
+        final int pickupSound = soundPool.load(getContext(), R.raw.pickup, 1);
 
         objects = new ArrayList<>();
         removeObjects = new ArrayList<>();
@@ -81,6 +88,7 @@ public class GameView extends SurfaceView {
             @Override
             public void trigger(final Objective objective) {
                 removeObjects.add(objective);
+                GameView.this.soundPool.play(pickupSound, 0.5f, 0.5f, 1, 0, 1);
                 ((Activity) context).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -128,8 +136,8 @@ public class GameView extends SurfaceView {
         level2.addWall(new Vector2D(position.x / 2 + gap * 2, position.y / 2 + gap), position.x / 2 - gap * 2, 10);
 
         level2.addObjective("Motor", new DrawObject(ContextCompat.getDrawable(context, R.drawable.motor)), position.multiply(0.5f).plus(new Vector2D(-gap * 2, -gap * 2)));
-        level2.addObjective("Buzzer", new DrawObject(ContextCompat.getDrawable(context, R.drawable.buzzer)), position.multiply(0.5f).plus(new Vector2D(-gap * 2, gap * 2)));
         level2.addObjective("Switch", new DrawObject(ContextCompat.getDrawable(context, R.drawable.switchoff)), position.multiply(0.5f).plus(new Vector2D(gap * 2, gap * 2)));
+        level2.addObjective("Buzzer", new DrawObject(ContextCompat.getDrawable(context, R.drawable.buzzer)), position.multiply(0.5f).plus(new Vector2D(-gap * 2, gap * 2)));
         character = new PhysicsObject(profile, position.multiply(0.5f), 0.1f, 0.5f);
         level2.addPhysicsObject(character);
 
@@ -200,6 +208,7 @@ public class GameView extends SurfaceView {
 
     private void updateScene() {
         long previousTime = System.currentTimeMillis();
+        boolean isPlaying = false;
         while (isRunning) {
             long currentTime = System.currentTimeMillis();
             float changeInTime = (currentTime - previousTime);
@@ -209,14 +218,22 @@ public class GameView extends SurfaceView {
             if (isPaused) continue;
             for (int i = 0; i < objects.size(); i++) {
                 GameObject object = objects.get(i);
-                if (object instanceof PhysicsObject) {
-                    ((PhysicsObject) object).update(pixelsToMetres * changeInTime / 1000f);
-                    for (int j = 0; j < objects.size(); j++) {
-                        GameObject otherObject = objects.get(j);
-                        if (j == i || !(otherObject instanceof PhysicsObject)) continue;
-                        ((PhysicsObject) object).checkCollision((PhysicsObject) otherObject, pixelsToMetres * changeInTime / 1000f);
-                    }
+                if (!(object instanceof PhysicsObject)) continue;
+                PhysicsObject phys = ((PhysicsObject) object);
+                phys.update(pixelsToMetres * changeInTime / 1000f);
+                for (int j = 0; j < objects.size(); j++) {
+                    GameObject otherObject = objects.get(j);
+                    if (j == i || !(otherObject instanceof PhysicsObject)) continue;
+                    boolean hit = phys.checkCollision((PhysicsObject) otherObject, pixelsToMetres * changeInTime / 1000f);
+                    //TODO reenable this when collision works properly
+//                    if (hit && !isPlaying) {
+//                        soundPool.play(collisionSound, 0.2f, 0.2f, 1, 0, 1);
+//                        isPlaying = true;
+//                    } else {
+//                        isPlaying = hit;
+//                    }
                 }
+
             }
             for (int i = 0; i < removeObjects.size(); i++) {
                 objects.remove(removeObjects.get(i));

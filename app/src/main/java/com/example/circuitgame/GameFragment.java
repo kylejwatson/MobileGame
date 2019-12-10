@@ -1,10 +1,16 @@
 package com.example.circuitgame;
 
 import android.content.Intent;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -28,6 +34,9 @@ public class GameFragment extends Fragment {
     private TextView objectiveLabel;
     private NavController navController;
     private Objective currentObjective;
+    private SoundPool soundPool;
+    private int winSound;
+    private int loseSound;
 
     public GameFragment() {
         // Required empty public constructor
@@ -47,7 +56,20 @@ public class GameFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .setUsage(AudioAttributes.USAGE_GAME)
+                    .build();
+            soundPool = new SoundPool.Builder()
+                    .setMaxStreams(2)
+                    .setAudioAttributes(audioAttributes)
+                    .build();
+        } else {
+            soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 1);
+        }
+        winSound = soundPool.load(getContext(), R.raw.win, 1);
+        loseSound = soundPool.load(getContext(), R.raw.losew, 1);
         Button helpButton = view.findViewById(R.id.helpButton);
         helpButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,7 +84,7 @@ public class GameFragment extends Fragment {
         GameView gameView = GameView.getInstance(getContext(), new GameView.ObjectiveListener() {
             @Override
             public void objectiveReached(Objective objective) {
-                if (currentObjective == null){
+                if (currentObjective == null) {
                     currentObjective = objective;
                     objectiveLabel.setText("Collect: " + currentObjective.getName());
                     return;
@@ -82,7 +104,7 @@ public class GameFragment extends Fragment {
                 currentObjective = objective.getNextObjective();
                 objectiveLabel.setText("Collect: " + currentObjective.getName());
             }
-        });
+        }, soundPool);
 
         FrameLayout frameLayout = view.findViewById(R.id.gameFrame);
         frameLayout.addView(gameView);
@@ -107,6 +129,8 @@ public class GameFragment extends Fragment {
     }
 
     private void lose() {
+        soundPool.play (loseSound, 1.0f, 1.0f, 1, 0, 1);
+
         Bundle bundle = new Bundle();
         bundle.putString(LeaderboardFragment.TEXT_ARG, "You Lose");
         bundle.putInt(LeaderboardFragment.POINTS_ARG, currentScore);
@@ -114,6 +138,8 @@ public class GameFragment extends Fragment {
     }
 
     private void win() {
+        soundPool.play (winSound, 0.5f, 0.5f, 1, 0, 1);
+
         User currentUser = UserFile.getInstance(getContext()).getCurrentUser();
         if (currentUser.getScore() < currentScore) currentUser.setScore(currentScore);
         Bundle bundle = new Bundle();

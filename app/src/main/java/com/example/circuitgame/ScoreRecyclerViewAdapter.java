@@ -62,6 +62,13 @@ public class ScoreRecyclerViewAdapter extends RecyclerView.Adapter<ScoreRecycler
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                }else{
+                    ((Activity)holder.view.getContext()).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            holder.profile.setImageResource(R.drawable.prof);
+                        }
+                    });
                 }
             }
         };
