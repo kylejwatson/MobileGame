@@ -51,7 +51,7 @@ public class GameView extends SurfaceView {
         return instance;
     }
 
-    public static GameView getInstance(){
+    public static GameView getInstance() {
         return instance;
     }
 
@@ -68,7 +68,7 @@ public class GameView extends SurfaceView {
         gravity = Vector2D.ZERO.clone();
         attachGravitySensor(context);
 
-        Vector2D position = new Vector2D(1000, 1400);
+        Vector2D position = new Vector2D(1050, 1600);
         DrawObject profile = getProfile(context);
 
         Level.ObjectiveEvent event = new Level.ObjectiveEvent() {
@@ -90,14 +90,42 @@ public class GameView extends SurfaceView {
         level1.addWall(Vector2D.ZERO, position.x, 10);
         level1.addWall(new Vector2D(position.x, 0), 10, position.y);
         level1.addWall(new Vector2D(0, position.y), position.x, 10);
-        level1.addWall(new Vector2D(position.x / 2, position.y/2), 10, position.y/2);
+        level1.addWall(new Vector2D(position.x / 2, position.y / 2), 10, position.y / 2);
+        level1.addWall(new Vector2D(position.x / 2, position.y / 2), position.x / 4, 10);
+        level1.addWall(new Vector2D((position.x * 3) / 4, position.y / 2), 10, position.y / 4);
         level1.addObjective("Cell", new DrawObject(ContextCompat.getDrawable(context, R.drawable.battery)), new Vector2D(position.x * 0.2f, position.y * 0.8f));
-        level1.addObjective("Bulb", new DrawObject(ContextCompat.getDrawable(context, R.drawable.bulb)), new Vector2D(position.x * 0.8f, position.y * 0.8f));
-        PhysicsObject character = new PhysicsObject(profile,new Vector2D(position.x / 2, position.y/4), 0.5f, 0.5f);
+        level1.addObjective("Bulb", new DrawObject(ContextCompat.getDrawable(context, R.drawable.bulb)), new Vector2D((position.x * 5) / 8, (position.y * 5) / 8));
+        PhysicsObject character = new PhysicsObject(profile, new Vector2D((position.x * 5) / 8, position.y / 4), 0.5f, 0.5f);
         level1.addPhysicsObject(character);
-        level1.loadLevel(objects);
-        objectiveListener.objectiveReached(level1.getFirstObjective());
+//        level1.loadLevel(objects);
+//        objectiveListener.objectiveReached(level1.getFirstObjective());
 
+        int gap = 150;
+        Level level2 = new Level(Color.RED, event, gravity);
+        level2.addWall(Vector2D.ZERO, 10, position.y);
+        level2.addWall(Vector2D.ZERO, position.x, 10);
+        level2.addWall(new Vector2D(position.x, 0), 10, position.y);
+        level2.addWall(new Vector2D(0, position.y), position.x, 10);
+
+        level2.addWall(new Vector2D(position.x / 2, gap), 10, position.y / 2 - gap*2);
+        level2.addWall(new Vector2D(position.x / 2, position.y / 2 + gap), 10, position.y / 2 - gap*2);
+        level2.addWall(new Vector2D(position.x / 2 - gap, position.y / 2 - gap), gap*2, 10);
+        level2.addWall(new Vector2D(position.x / 2 - gap, position.y / 2 + gap), gap*2, 10);
+        level2.addWall(new Vector2D(position.x / 2 - gap, position.y / 2 - gap), 10, gap*2);
+
+        level2.addWall(new Vector2D(position.x / 2 + gap, position.y / 2 - gap), 10, gap/2);
+        level2.addWall(new Vector2D(position.x / 2 + gap, position.y / 2 + gap/2), 10, gap/2);
+        level2.addWall(new Vector2D(gap, position.y / 2), position.x / 2 - gap*2, 10);
+
+        level2.addWall(new Vector2D(position.x / 2 + gap*2, position.y / 2 - gap), position.x / 2 - gap*2, 10);
+        level2.addWall(new Vector2D(position.x / 2 + gap*2, position.y / 2 + gap), position.x / 2 - gap*2, 10);
+
+        level2.addObjective("Motor", new DrawObject(ContextCompat.getDrawable(context, R.drawable.motor)), position.multiply(0.5f).plus(new Vector2D(-gap*2, -gap*2)));
+        level2.addObjective("Buzzer", new DrawObject(ContextCompat.getDrawable(context, R.drawable.buzzer)), position.multiply(0.5f).plus(new Vector2D(-gap*2, gap*2)));
+        character = new PhysicsObject(profile, position.multiply(0.5f), 0.1f, 0.5f);
+        level2.addPhysicsObject(character);
+        level2.loadLevel(objects);
+        objectiveListener.objectiveReached(level2.getFirstObjective());
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -120,7 +148,8 @@ public class GameView extends SurfaceView {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (bitmap == null) return new DrawObject(ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground));
+        if (bitmap == null)
+            return new DrawObject(ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground));
         Matrix matrix = new Matrix();
         matrix.postRotate(90);
         final Bitmap rotatedImg = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
@@ -165,7 +194,7 @@ public class GameView extends SurfaceView {
                     }
                 }
             }
-            for (int i = 0; i < removeObjects.size(); i++){
+            for (int i = 0; i < removeObjects.size(); i++) {
                 objects.remove(removeObjects.get(i));
             }
             removeObjects.clear();
@@ -195,10 +224,11 @@ public class GameView extends SurfaceView {
         isRunning = false;
     }
 
-    public void pause(){
+    public void pause() {
         isPaused = true;
     }
-    public void play(){
+
+    public void play() {
         isPaused = false;
         Log.d("RUN", isPaused + " " + isRunning);
     }
