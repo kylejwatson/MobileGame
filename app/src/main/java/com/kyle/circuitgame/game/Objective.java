@@ -1,16 +1,16 @@
-package com.example.circuitgame;
+package com.kyle.circuitgame.game;
 
-class Objective extends PhysicsObject{
+public class Objective extends PhysicsObject{
     private String name;
     private Level.ObjectiveEvent event;
     private Objective nextObjective;
-    public Objective(String name, DrawObject drawObject, Vector2D position, Level.ObjectiveEvent event) {
+    Objective(String name, DrawObject drawObject, Vector2D position, Level.ObjectiveEvent event) {
         super(drawObject, position, true);
         this.name = name;
         this.event = event;
     }
 
-    public void setNextObjective(Objective nextObjective) {
+    void setNextObjective(Objective nextObjective) {
         this.nextObjective = nextObjective;
     }
 

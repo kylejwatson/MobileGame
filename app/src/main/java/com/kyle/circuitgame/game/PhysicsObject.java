@@ -1,9 +1,6 @@
-package com.example.circuitgame;
+package com.kyle.circuitgame.game;
 
-import android.graphics.Rect;
-import android.util.Log;
-
-public class PhysicsObject extends GameObject {
+class PhysicsObject extends GameObject {
     private static final float SCALE = 0.000001f;
 
     private Vector2D gravity = Vector2D.ZERO.clone();
@@ -13,30 +10,30 @@ public class PhysicsObject extends GameObject {
     private boolean kinematic = false;
     private boolean isTrigger = false;
 
-    public PhysicsObject(DrawObject drawObject, Vector2D position, float friction, float bounciness, Vector2D velocity) {
+    PhysicsObject(DrawObject drawObject, Vector2D position, float friction, float bounciness, Vector2D velocity) {
         super(drawObject, position);
         this.friction = friction / 100 + 1;
         this.bounciness = bounciness;
         this.velocity = velocity.clone();
     }
 
-    public PhysicsObject(DrawObject drawObject, Vector2D position, float friction, float bounciness) {
+    PhysicsObject(DrawObject drawObject, Vector2D position, float friction, float bounciness) {
         super(drawObject, position);
         this.friction = friction / 100 + 1;
         this.bounciness = bounciness;
     }
 
-    public PhysicsObject(DrawObject drawObject, Vector2D position, boolean isTrigger) {
+    PhysicsObject(DrawObject drawObject, Vector2D position, boolean isTrigger) {
         super(drawObject, position);
         kinematic = true;
         this.isTrigger = isTrigger;
     }
 
-    public void setGravity(Vector2D gravity) {
+    void setGravity(Vector2D gravity) {
         this.gravity = gravity;
     }
 
-    public void update(float changeInTime) {
+    void update(float changeInTime) {
         if (kinematic) return;
         velocity.translate(gravity.multiply(changeInTime));
         position.translate(velocity.multiply(changeInTime * SCALE));
@@ -44,9 +41,10 @@ public class PhysicsObject extends GameObject {
 
 
     private void onCollide(PhysicsObject other, float changeInTime) {
+        //TODO use rect for better collision resolution
         if (kinematic) return;
         position.translate(new Vector2D(0, -velocity.y * SCALE * changeInTime));
-        if (!collides(other)) {
+        if (!getRect().intersect(other.getRect())) {
             velocity.y *= -bounciness;
             velocity.x /= friction;
             return;
@@ -54,7 +52,7 @@ public class PhysicsObject extends GameObject {
 
         position.translate(new Vector2D(-velocity.x * SCALE * changeInTime, velocity.y * SCALE * changeInTime));
         velocity.x *= -bounciness;
-        if (!collides(other)) {
+        if (!getRect().intersect(other.getRect())) {
             velocity.y /= friction;
             return;
         }
@@ -62,13 +60,8 @@ public class PhysicsObject extends GameObject {
         velocity.y *= -bounciness;
     }
 
-    private boolean collides(PhysicsObject otherObject) {
-        //TODO use rect for better collision resolution
-        return getRect().intersect(otherObject.getRect());
-    }
-
-    public boolean checkCollision(PhysicsObject otherObject, float changeInTime) {
-        if (kinematic || !collides(otherObject)) return false;
+    boolean checkCollision(PhysicsObject otherObject, float changeInTime) {
+        if (kinematic || !getRect().intersect(otherObject.getRect())) return false;
         if (!otherObject.isTrigger) {
             onCollide(otherObject, changeInTime);
             return true;
@@ -86,7 +79,7 @@ public class PhysicsObject extends GameObject {
         return "Pos: " + position + "\nVel: " + velocity + "\nGrav: " + gravity;
     }
 
-    public float getSpeed() {
+    float getSpeed() {
         return velocity.length();
     }
 }

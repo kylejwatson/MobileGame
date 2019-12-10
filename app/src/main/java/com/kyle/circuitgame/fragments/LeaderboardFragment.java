@@ -1,4 +1,4 @@
-package com.example.circuitgame;
+package com.kyle.circuitgame.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -16,6 +16,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.kyle.circuitgame.R;
+import com.kyle.circuitgame.adapters.ScoreRecyclerViewAdapter;
+import com.kyle.circuitgame.utils.UserFile;
 
 /**
  * A fragment representing a list of Items.

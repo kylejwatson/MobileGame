@@ -1,4 +1,4 @@
-package com.example.circuitgame;
+package com.kyle.circuitgame.fragments;
 
 import android.content.Intent;
 import android.media.AudioAttributes;
@@ -19,6 +19,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import com.kyle.circuitgame.R;
+import com.kyle.circuitgame.activities.HelpActivity;
+import com.kyle.circuitgame.game.GameView;
+import com.kyle.circuitgame.game.Objective;
+import com.kyle.circuitgame.models.User;
+import com.kyle.circuitgame.utils.UserFile;
 
 public class GameFragment extends Fragment {
     private int currentScore;

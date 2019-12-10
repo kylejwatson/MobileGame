@@ -1,4 +1,4 @@
-package com.example.circuitgame;
+package com.kyle.circuitgame.adapters;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,6 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.kyle.circuitgame.R;
+import com.kyle.circuitgame.models.User;
+import com.kyle.circuitgame.utils.UserFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -79,14 +83,14 @@ public class ScoreRecyclerViewAdapter extends RecyclerView.Adapter<ScoreRecycler
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public final TextView username;
-        public final TextView score;
-        public final ImageView profile;
-        public final View view;
+        final TextView username;
+        final TextView score;
+        final ImageView profile;
+        final View view;
         private final UserClickListener userClickListener;
 
 
-        public ViewHolder(View view, UserClickListener userClickListener) {
+        ViewHolder(View view, UserClickListener userClickListener) {
             super(view);
             this.view = view;
             username = view.findViewById(R.id.userName);

@@ -1,4 +1,4 @@
-package com.example.circuitgame;
+package com.kyle.circuitgame.game;
 
 import android.app.Activity;
 import android.content.Context;
@@ -20,6 +20,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import androidx.core.content.ContextCompat;
+
+import com.kyle.circuitgame.R;
+import com.kyle.circuitgame.utils.UserFile;
 
 import java.io.IOException;
 import java.util.ArrayList;

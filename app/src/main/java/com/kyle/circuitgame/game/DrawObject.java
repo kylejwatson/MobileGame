@@ -1,4 +1,4 @@
-package com.example.circuitgame;
+package com.kyle.circuitgame.game;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -13,25 +13,25 @@ class DrawObject {
     private Paint paint;
     private Bitmap bitmap;
 
-    public DrawObject(Drawable image) {
+    DrawObject(Drawable image) {
         this.image = image;
         width = image.getIntrinsicWidth();
         height = image.getIntrinsicHeight();
     }
 
-    public DrawObject(Paint paint, float width, float height) {
+    DrawObject(Paint paint, float width, float height) {
         this.paint = paint;
         this.width = width;
         this.height = height;
     }
 
-    public DrawObject(Bitmap bitmap) {
+    DrawObject(Bitmap bitmap) {
         this.bitmap = bitmap;
         width = bitmap.getWidth();
         height = bitmap.getHeight();
     }
 
-    public void draw(Canvas canvas, Vector2D position) {
+    void draw(Canvas canvas, Vector2D position) {
         if (paint != null)
             canvas.drawRect(getRect(position), paint);
         if (image != null) {
@@ -43,7 +43,7 @@ class DrawObject {
         }
     }
 
-    public Rect getRect(Vector2D position){
+    Rect getRect(Vector2D position){
         return new Rect((int) position.x, (int) position.y, (int) (position.x + width), (int) (position.y + height));
     }
 }

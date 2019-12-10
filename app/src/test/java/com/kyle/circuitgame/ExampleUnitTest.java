@@ -1,4 +1,4 @@
-package com.example.circuitgame;
+package com.kyle.circuitgame;
 
 import org.junit.Test;
 

@@ -1,20 +1,23 @@
-package com.example.circuitgame;
+package com.kyle.circuitgame.models;
 
 import android.net.Uri;
 
-class User{
+import com.kyle.circuitgame.utils.UserFile;
+
+
+public class User{
     private String username;
     private int ID;
     private int score;
     private Uri uri;
 
-    User(String username) {
+    public User(String username) {
         this.username = username;
         uri = Uri.EMPTY;
         ID = -1;
     }
 
-    User(String[] fileLine) {
+    public User(String[] fileLine) {
         this.ID = Integer.parseInt(fileLine[0]);
         this.username = fileLine[1];
         this.score = Integer.parseInt(fileLine[2]);
@@ -22,23 +25,23 @@ class User{
         this.uri = fileLine.length > 3 ? Uri.parse(fileLine[3]) : Uri.EMPTY;
     }
 
-    String toCSV(){
+    public String toCSV(){
         return ID + UserFile.COMMA + username + UserFile.COMMA + score + UserFile.COMMA + uri.toString() + UserFile.NEWLINE;
     }
 
-    String getUsername() {
+    public String getUsername() {
         return username;
     }
 
-    void setUsername(String username) {
+    public void setUsername(String username) {
         this.username = username;
     }
 
-    int getID() {
+    public int getID() {
         return ID;
     }
 
-    void setID(int id) {
+    public void setID(int id) {
         this.ID = id;
     }
 

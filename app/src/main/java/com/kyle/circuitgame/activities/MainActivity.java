@@ -1,8 +1,11 @@
-package com.example.circuitgame;
+package com.kyle.circuitgame.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.kyle.circuitgame.R;
+import com.kyle.circuitgame.utils.UserFile;
 
 public class MainActivity extends AppCompatActivity {
 

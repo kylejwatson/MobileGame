@@ -1,4 +1,4 @@
-package com.example.circuitgame;
+package com.kyle.circuitgame.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
@@ -13,6 +13,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.kyle.circuitgame.R;
+import com.kyle.circuitgame.models.User;
+import com.kyle.circuitgame.utils.UserFile;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,8 +1,11 @@
-package com.example.circuitgame;
+package com.kyle.circuitgame.utils;
 
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
+import com.kyle.circuitgame.activities.UserActivity;
+import com.kyle.circuitgame.models.User;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,9 +16,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-class UserFile {
-    static final char NEWLINE = '\n';
-    static final String COMMA = ",";
+public class UserFile {
+    public static final char NEWLINE = '\n';
+    public static final String COMMA = ",";
     private static final String FILE_NAME = "users.csv";
     private List<User> users;
     private static UserFile instance;
@@ -27,7 +30,7 @@ class UserFile {
         currentUser = getUser(context, users.size() == 0 ? 0 : users.size() - 1);
     }
 
-    static UserFile getInstance(Context context) {
+    public static UserFile getInstance(Context context) {
         if (instance == null) instance = new UserFile(context);
         return instance;
     }
@@ -35,7 +38,7 @@ class UserFile {
     public class FileRunnable implements Runnable {
         private Context context;
 
-        public FileRunnable(Context context) {
+        FileRunnable(Context context) {
             this.context = context;
         }
 
@@ -58,7 +61,7 @@ class UserFile {
         }
     }
 
-    void saveToFile(Context context) {
+    public void saveToFile(Context context) {
         FileRunnable fileRunnable = new FileRunnable(context);
         new Thread(fileRunnable).start();
     }
@@ -88,7 +91,7 @@ class UserFile {
         return users.get(i);
     }
 
-    void addUser(User user) {
+    public void addUser(User user) {
         int max = 0;
         for (User u : users) {
             if (u.getID() >= max) {
@@ -100,15 +103,15 @@ class UserFile {
         currentUser = user;
     }
 
-    void selectCurrentUser(int i) {
+    public void selectCurrentUser(int i) {
         currentUser = users.get(i);
     }
 
-    User getCurrentUser() {
+    public User getCurrentUser() {
         return currentUser;
     }
 
-    List<User> getUserList() {
+    public List<User> getUserList() {
         return users;
     }
 

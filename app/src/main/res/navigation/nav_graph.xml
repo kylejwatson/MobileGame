@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/titleFragment"
-        android:name="com.example.circuitgame.TitleFragment"
+        android:name="com.kyle.circuitgame.fragments.TitleFragment"
         android:label="fragment_title"
         tools:layout="@layout/fragment_title" >
         <action
@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/leaderboardFragment"
-        android:name="com.example.circuitgame.LeaderboardFragment"
+        android:name="com.kyle.circuitgame.fragments.LeaderboardFragment"
         android:label="fragment_score_list"
         tools:layout="@layout/fragment_leaderboard" >
         <action
@@ -29,7 +29,7 @@
     </fragment>
     <fragment
         android:id="@+id/gameFragment"
-        android:name="com.example.circuitgame.GameFragment"
+        android:name="com.kyle.circuitgame.fragments.GameFragment"
         android:label="fragment_game"
         tools:layout="@layout/fragment_game" >
         <action

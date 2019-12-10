@@ -1,16 +1,16 @@
-package com.example.circuitgame;
+package com.kyle.circuitgame.game;
 
 import android.graphics.Paint;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Level {
+class Level {
 
-    public interface ObjectiveEvent{
+    interface ObjectiveEvent {
         void trigger(Objective objective);
     }
+
     private List<GameObject> objects;
     private Objective headObjective;
     private Objective currentObjective;
@@ -18,7 +18,7 @@ public class Level {
     private ObjectiveEvent event;
     private Vector2D gravity;
 
-    public Level(int wallColor, ObjectiveEvent event, Vector2D gravity) {
+    Level(int wallColor, ObjectiveEvent event, Vector2D gravity) {
         objects = new ArrayList<>();
         wallPaint = new Paint();
         wallPaint.setColor(wallColor);
@@ -26,21 +26,21 @@ public class Level {
         this.gravity = gravity;
     }
 
-    public void addObject(GameObject object) {
+    void addObject(GameObject object) {
         objects.add(object);
     }
 
-    public void addPhysicsObject(PhysicsObject object) {
+    void addPhysicsObject(PhysicsObject object) {
         object.setGravity(gravity);
         addObject(object);
     }
 
-    public void addWall(Vector2D position, float width, float height){
+    void addWall(Vector2D position, float width, float height) {
         GameObject object = new PhysicsObject(new DrawObject(wallPaint, width, height), position, false);
         objects.add(object);
     }
 
-    public void addObjective(String name, DrawObject drawObject, Vector2D position){
+    void addObjective(String name, DrawObject drawObject, Vector2D position) {
         Objective object = new Objective(name, drawObject, position, event);
 
         if (headObjective == null) headObjective = object;
@@ -49,11 +49,11 @@ public class Level {
         addObject(object);
     }
 
-    public Objective getFirstObjective(){
+    Objective getFirstObjective() {
         return headObjective;
     }
 
-    public void loadLevel(List<GameObject> objects){
+    void loadLevel(List<GameObject> objects) {
         objects.clear();
         objects.addAll(this.objects);
     }
