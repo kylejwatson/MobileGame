@@ -15,18 +15,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 /**
  * A fragment representing a list of Items.
  * <p/>
  */
 public class LeaderboardFragment extends Fragment {
+    public static final String TEXT_ARG = "win_lose_text";
+    public static final String POINTS_ARG = "win_lose_points";
 
-
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public LeaderboardFragment() {
     }
 
@@ -39,8 +37,11 @@ public class LeaderboardFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         Context context = view.getContext();
+        TextView winLabel = view.findViewById(R.id.winLabel);
+        winLabel.setText(getArguments().getString(TEXT_ARG));
+        TextView pointLabel = view.findViewById(R.id.pointLabel);
+        pointLabel.setText("That Try: " + getArguments().getInt(POINTS_ARG));
         RecyclerView recyclerView = view.findViewById(R.id.scoreList);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(new ScoreRecyclerViewAdapter(UserFile.getInstance(context).getUserList(), null));

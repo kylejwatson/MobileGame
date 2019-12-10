@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -115,7 +116,10 @@ public class GameView extends SurfaceView {
             e.printStackTrace();
         }
         if (bitmap == null) return new DrawObject(ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground));
-        return new DrawObject(Bitmap.createScaledBitmap(bitmap, 100, 100, false));
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+        final Bitmap rotatedImg = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+        return new DrawObject(Bitmap.createScaledBitmap(rotatedImg, 100, 100, true));
     }
 
     private void attachGravitySensor(Context context) {

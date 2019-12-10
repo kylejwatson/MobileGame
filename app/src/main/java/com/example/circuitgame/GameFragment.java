@@ -78,13 +78,18 @@ public class GameFragment extends Fragment {
     }
 
     private void lose() {
-        // TODO make proper lose screen/make leaderboard show lose or win
-        objectiveLabel.setText("LOSE");
+        Bundle bundle = new Bundle();
+        bundle.putString(LeaderboardFragment.TEXT_ARG, "You Lose");
+        bundle.putInt(LeaderboardFragment.POINTS_ARG, currentScore);
+        navController.navigate(R.id.action_gameFragment_to_leaderboardFragment, bundle);
     }
 
     private void win() {
         User currentUser = UserFile.getInstance(getContext()).getCurrentUser();
         if (currentUser.getScore() < currentScore) currentUser.setScore(currentScore);
-        navController.navigate(R.id.action_gameFragment_to_leaderboardFragment);
+        Bundle bundle = new Bundle();
+        bundle.putString(LeaderboardFragment.TEXT_ARG, "You Win");
+        bundle.putInt(LeaderboardFragment.POINTS_ARG, currentScore);
+        navController.navigate(R.id.action_gameFragment_to_leaderboardFragment, bundle);
     }
 }

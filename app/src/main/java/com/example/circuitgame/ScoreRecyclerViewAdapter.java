@@ -4,6 +4,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -48,12 +49,14 @@ public class ScoreRecyclerViewAdapter extends RecyclerView.Adapter<ScoreRecycler
             public void run() {
                 if (!user.getUri().equals(Uri.EMPTY)) {
                     try {
-                        //TODO fix sideways loading
                         final Bitmap bitmap = MediaStore.Images.Media.getBitmap(holder.view.getContext().getContentResolver(), user.getUri());
+                        Matrix matrix = new Matrix();
+                        matrix.postRotate(90);
+                        final Bitmap rotatedImg = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
                         ((Activity)holder.view.getContext()).runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                holder.profile.setImageBitmap(bitmap);
+                                holder.profile.setImageBitmap(rotatedImg);
                             }
                         });
                     } catch (IOException e) {
