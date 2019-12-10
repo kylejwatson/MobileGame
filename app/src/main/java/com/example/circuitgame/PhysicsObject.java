@@ -1,5 +1,8 @@
 package com.example.circuitgame;
 
+import android.graphics.Rect;
+import android.util.Log;
+
 public class PhysicsObject extends GameObject {
     private static final float SCALE = 0.000001f;
 
@@ -12,18 +15,18 @@ public class PhysicsObject extends GameObject {
 
     public PhysicsObject(DrawObject drawObject, Vector2D position, float friction, float bounciness, Vector2D velocity) {
         super(drawObject, position);
-        this.friction = friction/100 + 1;
+        this.friction = friction / 100 + 1;
         this.bounciness = bounciness;
         this.velocity = velocity.clone();
     }
 
     public PhysicsObject(DrawObject drawObject, Vector2D position, float friction, float bounciness) {
         super(drawObject, position);
-        this.friction = friction/100 + 1;
+        this.friction = friction / 100 + 1;
         this.bounciness = bounciness;
     }
 
-    public PhysicsObject(DrawObject drawObject, Vector2D position, boolean isTrigger){
+    public PhysicsObject(DrawObject drawObject, Vector2D position, boolean isTrigger) {
         super(drawObject, position);
         kinematic = true;
         this.isTrigger = isTrigger;
@@ -33,22 +36,17 @@ public class PhysicsObject extends GameObject {
         this.gravity = gravity;
     }
 
-    public void update(float changeInTime){
+    public void update(float changeInTime) {
         if (kinematic) return;
         velocity.translate(gravity.multiply(changeInTime));
         position.translate(velocity.multiply(changeInTime * SCALE));
     }
 
-    private float getRight(){
-        return position.x + getWidth();
-    }
 
-    private float getBottom(){
-        return position.y + getHeight();
-    }
-
-    private void onCollide(PhysicsObject other, float changeInTime){
+    private void onCollide(PhysicsObject other, float changeInTime) {
+        Log.d("COLL", "onCollide");
         if (kinematic) return;
+        Log.d("COLL", "onCollide not kinematic");
         position.translate(new Vector2D(0, -velocity.y * SCALE * changeInTime));
         if (!collides(other)) {
             velocity.y *= -bounciness;
@@ -66,28 +64,29 @@ public class PhysicsObject extends GameObject {
         velocity.y *= -bounciness;
     }
 
-    private boolean collides(PhysicsObject otherObject){
-        //TODO use rect as it has intersection detection
-        boolean leftOverlap = position.x > otherObject.position.x && position.x < otherObject.getRight();
-        boolean rightOverlap = getRight() > otherObject.position.x && getRight() < otherObject.getRight();
-        boolean topOverlap = position.y > otherObject.position.y && position.y < otherObject.getBottom();
-        boolean bottomOverlap = getBottom() > otherObject.position.y && getBottom() < otherObject.getBottom();
-        return (leftOverlap || rightOverlap) && (topOverlap || bottomOverlap);
+    private boolean collides(PhysicsObject otherObject) {
+        //TODO use rect for better collision resolution
+        return getRect().intersect(otherObject.getRect());
     }
 
     public void checkCollision(PhysicsObject otherObject, float changeInTime) {
-        if (collides(otherObject)){
-            if (otherObject.isTrigger) otherObject.trigger(this, changeInTime);
-            else onCollide(otherObject, changeInTime);
+        if (kinematic) return;
+        if (!collides(otherObject)) return;
+        if (!otherObject.isTrigger) {
+            Log.d("COLL", "Solid" + this + otherObject);
+            onCollide(otherObject, changeInTime);
+            return;
         }
+        Log.d("COLL", "Trigger" + this + otherObject);
+        otherObject.trigger(this, changeInTime);
     }
 
-    protected void trigger(PhysicsObject other, float changeInTime){
+    protected void trigger(PhysicsObject other, float changeInTime) {
         //
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "Pos: " + position + "\nVel: " + velocity + "\nGrav: " + gravity;
     }
 }

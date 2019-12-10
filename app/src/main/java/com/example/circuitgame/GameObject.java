@@ -1,6 +1,7 @@
 package com.example.circuitgame;
 
 import android.graphics.Canvas;
+import android.graphics.Rect;
 
 import androidx.annotation.NonNull;
 
@@ -55,12 +56,8 @@ public class GameObject {
         drawObject.draw(canvas, position);
     }
 
-    public float getWidth() {
-        return drawObject.getWidth();
-    }
-
-    public float getHeight() {
-        return drawObject.getHeight();
+    protected Rect getRect(){
+        return drawObject.getRect(position);
     }
 }
 

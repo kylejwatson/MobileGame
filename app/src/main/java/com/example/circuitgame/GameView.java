@@ -37,6 +37,7 @@ public class GameView extends SurfaceView {
     private boolean isRunning = true;
 
     private List<GameObject> objects;
+    private List<GameObject> removeObjects;
     private Vector2D gravity;
 
     public static GameView getInstance(final Context context, final ObjectiveListener objectiveListener) {
@@ -54,6 +55,7 @@ public class GameView extends SurfaceView {
         pixelsToMetres = metrics.densityDpi * 39.37008f;
 
         objects = new ArrayList<>();
+        removeObjects = new ArrayList<>();
         gravity = Vector2D.ZERO.clone();
         attachGravitySensor(context);
 
@@ -70,7 +72,7 @@ public class GameView extends SurfaceView {
                         objectiveListener.objectiveReached(objective);
                     }
                 });
-                objects.remove(objective);
+                removeObjects.add(objective);
             }
         };
 
@@ -82,13 +84,7 @@ public class GameView extends SurfaceView {
         level1.addWall(new Vector2D(position.x / 2, position.y/2), 10, position.y/2);
         level1.addObjective("Cell", new DrawObject(ContextCompat.getDrawable(context, R.drawable.battery)), new Vector2D(position.x * 0.2f, position.y * 0.8f));
         level1.addObjective("Bulb", new DrawObject(ContextCompat.getDrawable(context, R.drawable.bulb)), new Vector2D(position.x * 0.8f, position.y * 0.8f));
-        PhysicsObject character = new PhysicsObject(profile,new Vector2D(position.x / 2, position.y/4), 0.5f, 0.5f){
-            @Override
-            public void update(float changeInTime) {
-                super.update(changeInTime);
-                Log.d("CHAR", this.toString());
-            }
-        };
+        PhysicsObject character = new PhysicsObject(profile,new Vector2D(position.x / 2, position.y/4), 0.5f, 0.5f);
         level1.addPhysicsObject(character);
         level1.loadLevel(objects);
         objectiveListener.objectiveReached(level1.getFirstObjective());
@@ -159,6 +155,10 @@ public class GameView extends SurfaceView {
                     }
                 }
             }
+            for (int i = 0; i < removeObjects.size(); i++){
+                objects.remove(removeObjects.get(i));
+            }
+            removeObjects.clear();
         }
     }
 

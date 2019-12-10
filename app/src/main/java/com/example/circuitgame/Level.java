@@ -46,7 +46,7 @@ public class Level {
         if (headObjective == null) headObjective = object;
         if (currentObjective != null) currentObjective.setNextObjective(object);
         currentObjective = object;
-        objects.add(object);
+        addObject(object);
     }
 
     public Objective getFirstObjective(){

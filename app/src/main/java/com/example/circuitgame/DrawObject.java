@@ -3,6 +3,7 @@ package com.example.circuitgame;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
 class DrawObject {
@@ -32,9 +33,9 @@ class DrawObject {
 
     public void draw(Canvas canvas, Vector2D position) {
         if (paint != null)
-            canvas.drawRect(position.x, position.y, position.x + width, position.y + height, paint);
+            canvas.drawRect(getRect(position), paint);
         if (image != null) {
-            image.setBounds((int) position.x, (int) position.y, (int) (position.x + width), (int) (position.y + height));
+            image.setBounds(getRect(position));
             image.draw(canvas);
         }
         if (bitmap != null) {
@@ -42,11 +43,7 @@ class DrawObject {
         }
     }
 
-    public float getWidth() {
-        return width;
-    }
-
-    public float getHeight() {
-        return height;
+    public Rect getRect(Vector2D position){
+        return new Rect((int) position.x, (int) position.y, (int) (position.x + width), (int) (position.y + height));
     }
 }
