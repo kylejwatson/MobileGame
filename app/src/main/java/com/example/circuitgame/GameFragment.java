@@ -68,11 +68,13 @@ public class GameFragment extends Fragment {
                     return;
                 }
                 if (!objective.equals(currentObjective)) {
+                    Log.d("LOSE", currentScore + "");
                     lose();
                     return;
                 }
                 currentScore += 100;
                 scoreLabel.setText("Score: " + currentScore);
+                Log.d("COLLECT", currentScore + "");
                 if (objective.getNextObjective() == null) {
                     win();
                     return;

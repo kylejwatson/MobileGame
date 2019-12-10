@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -21,6 +22,7 @@ import android.view.SurfaceView;
 import androidx.core.content.ContextCompat;
 
 import java.io.IOException;
+import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +30,7 @@ public class GameView extends SurfaceView {
 
     private static GameView instance;
     private boolean isPaused = false;
+    private List<Level> levels;
 
     public boolean getPaused() {
         return isPaused;
@@ -44,6 +47,7 @@ public class GameView extends SurfaceView {
     private List<GameObject> objects;
     private List<GameObject> removeObjects;
     private Vector2D gravity;
+    private int currentLevel = 0;
 
     public static GameView getInstance(final Context context, final ObjectiveListener objectiveListener) {
         if (instance != null) instance.stop();
@@ -68,20 +72,25 @@ public class GameView extends SurfaceView {
         gravity = Vector2D.ZERO.clone();
         attachGravitySensor(context);
 
+        levels = new ArrayList<>();
+
         Vector2D position = new Vector2D(1050, 1600);
         DrawObject profile = getProfile(context);
 
         Level.ObjectiveEvent event = new Level.ObjectiveEvent() {
             @Override
             public void trigger(final Objective objective) {
-                if (objective.getNextObjective() == null) stop();
+                removeObjects.add(objective);
                 ((Activity) context).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d("OBJ", "next: " + (objective.getNextObjective() == null));
                         objectiveListener.objectiveReached(objective);
                     }
                 });
-                removeObjects.add(objective);
+                if (objective.getNextObjective() == null) {
+                    loadLevel(objective);
+                }
             }
         };
 
@@ -97,8 +106,6 @@ public class GameView extends SurfaceView {
         level1.addObjective("Bulb", new DrawObject(ContextCompat.getDrawable(context, R.drawable.bulb)), new Vector2D((position.x * 5) / 8, (position.y * 5) / 8));
         PhysicsObject character = new PhysicsObject(profile, new Vector2D((position.x * 5) / 8, position.y / 4), 0.5f, 0.5f);
         level1.addPhysicsObject(character);
-//        level1.loadLevel(objects);
-//        objectiveListener.objectiveReached(level1.getFirstObjective());
 
         int gap = 150;
         Level level2 = new Level(Color.RED, event, gravity);
@@ -107,25 +114,31 @@ public class GameView extends SurfaceView {
         level2.addWall(new Vector2D(position.x, 0), 10, position.y);
         level2.addWall(new Vector2D(0, position.y), position.x, 10);
 
-        level2.addWall(new Vector2D(position.x / 2, gap), 10, position.y / 2 - gap*2);
-        level2.addWall(new Vector2D(position.x / 2, position.y / 2 + gap), 10, position.y / 2 - gap*2);
-        level2.addWall(new Vector2D(position.x / 2 - gap, position.y / 2 - gap), gap*2, 10);
-        level2.addWall(new Vector2D(position.x / 2 - gap, position.y / 2 + gap), gap*2, 10);
-        level2.addWall(new Vector2D(position.x / 2 - gap, position.y / 2 - gap), 10, gap*2);
+        level2.addWall(new Vector2D(position.x / 2, gap), 10, position.y / 2 - gap * 2);
+        level2.addWall(new Vector2D(position.x / 2, position.y / 2 + gap), 10, position.y / 2 - gap * 2);
+        level2.addWall(new Vector2D(position.x / 2 - gap, position.y / 2 - gap), gap * 2, 10);
+        level2.addWall(new Vector2D(position.x / 2 - gap, position.y / 2 + gap), gap * 2, 10);
+        level2.addWall(new Vector2D(position.x / 2 - gap, position.y / 2 - gap), 10, gap * 2);
 
-        level2.addWall(new Vector2D(position.x / 2 + gap, position.y / 2 - gap), 10, gap/2);
-        level2.addWall(new Vector2D(position.x / 2 + gap, position.y / 2 + gap/2), 10, gap/2);
-        level2.addWall(new Vector2D(gap, position.y / 2), position.x / 2 - gap*2, 10);
+        level2.addWall(new Vector2D(position.x / 2 + gap, position.y / 2 - gap), 10, gap / 2);
+        level2.addWall(new Vector2D(position.x / 2 + gap, position.y / 2 + gap / 2), 10, gap / 2);
+        level2.addWall(new Vector2D(gap, position.y / 2), position.x / 2 - gap * 2, 10);
 
-        level2.addWall(new Vector2D(position.x / 2 + gap*2, position.y / 2 - gap), position.x / 2 - gap*2, 10);
-        level2.addWall(new Vector2D(position.x / 2 + gap*2, position.y / 2 + gap), position.x / 2 - gap*2, 10);
+        level2.addWall(new Vector2D(position.x / 2 + gap * 2, position.y / 2 - gap), position.x / 2 - gap * 2, 10);
+        level2.addWall(new Vector2D(position.x / 2 + gap * 2, position.y / 2 + gap), position.x / 2 - gap * 2, 10);
 
-        level2.addObjective("Motor", new DrawObject(ContextCompat.getDrawable(context, R.drawable.motor)), position.multiply(0.5f).plus(new Vector2D(-gap*2, -gap*2)));
-        level2.addObjective("Buzzer", new DrawObject(ContextCompat.getDrawable(context, R.drawable.buzzer)), position.multiply(0.5f).plus(new Vector2D(-gap*2, gap*2)));
+        level2.addObjective("Motor", new DrawObject(ContextCompat.getDrawable(context, R.drawable.motor)), position.multiply(0.5f).plus(new Vector2D(-gap * 2, -gap * 2)));
+        level2.addObjective("Buzzer", new DrawObject(ContextCompat.getDrawable(context, R.drawable.buzzer)), position.multiply(0.5f).plus(new Vector2D(-gap * 2, gap * 2)));
+        level2.addObjective("Switch", new DrawObject(ContextCompat.getDrawable(context, R.drawable.switchoff)), position.multiply(0.5f).plus(new Vector2D(gap * 2, gap * 2)));
         character = new PhysicsObject(profile, position.multiply(0.5f), 0.1f, 0.5f);
         level2.addPhysicsObject(character);
-        level2.loadLevel(objects);
-        objectiveListener.objectiveReached(level2.getFirstObjective());
+
+        levels.add(level1);
+        levels.add(level2);
+
+        level1.loadLevel(objects);
+        objectiveListener.objectiveReached(level1.getFirstObjective());
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -141,6 +154,16 @@ public class GameView extends SurfaceView {
         }).start();
     }
 
+    private void loadLevel(Objective objective) {
+        if (currentLevel < levels.size() - 1) {
+            currentLevel++;
+            levels.get(currentLevel).loadLevel(objects);
+            objective.setNextObjective(levels.get(currentLevel).getFirstObjective());
+        } else {
+            stop();
+        }
+    }
+
     private DrawObject getProfile(Context context) {
         Bitmap bitmap = null;
         try {
@@ -148,10 +171,11 @@ public class GameView extends SurfaceView {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (bitmap == null)
-            return new DrawObject(ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground));
         Matrix matrix = new Matrix();
-        matrix.postRotate(90);
+        if (bitmap == null)
+            bitmap = ((BitmapDrawable) ContextCompat.getDrawable(context, R.drawable.prof)).getBitmap();
+        else
+            matrix.postRotate(90);
         final Bitmap rotatedImg = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
         return new DrawObject(Bitmap.createScaledBitmap(rotatedImg, 100, 100, true));
     }
