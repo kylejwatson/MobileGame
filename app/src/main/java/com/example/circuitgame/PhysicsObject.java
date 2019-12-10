@@ -44,9 +44,7 @@ public class PhysicsObject extends GameObject {
 
 
     private void onCollide(PhysicsObject other, float changeInTime) {
-        Log.d("COLL", "onCollide");
         if (kinematic) return;
-        Log.d("COLL", "onCollide not kinematic");
         position.translate(new Vector2D(0, -velocity.y * SCALE * changeInTime));
         if (!collides(other)) {
             velocity.y *= -bounciness;
@@ -73,11 +71,9 @@ public class PhysicsObject extends GameObject {
         if (kinematic) return;
         if (!collides(otherObject)) return;
         if (!otherObject.isTrigger) {
-            Log.d("COLL", "Solid" + this + otherObject);
             onCollide(otherObject, changeInTime);
             return;
         }
-        Log.d("COLL", "Trigger" + this + otherObject);
         otherObject.trigger(this, changeInTime);
     }
 

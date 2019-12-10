@@ -52,7 +52,6 @@ public class ChangeUserActivity extends AppCompatActivity {
             public void userOnClick(int i) {
                 UserFile.getInstance(ChangeUserActivity.this).selectCurrentUser(i);
                 adapter.notifyDataSetChanged();
-                Log.d("USER", "user" + UserFile.getInstance(ChangeUserActivity.this).getCurrentUser().getID());
             }
         });
         recyclerView.setAdapter(adapter);

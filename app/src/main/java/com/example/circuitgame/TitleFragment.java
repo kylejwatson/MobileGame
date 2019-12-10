@@ -73,6 +73,14 @@ public class TitleFragment extends Fragment {
                 context.startActivity(new Intent(context, ChangeUserActivity.class));
             }
         });
+
+        Button helpButton = view.findViewById(R.id.helpButton);
+        helpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), HelpActivity.class));
+            }
+        });
     }
 
     @Override

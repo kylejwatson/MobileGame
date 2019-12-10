@@ -27,6 +27,11 @@ import java.util.List;
 public class GameView extends SurfaceView {
 
     private static GameView instance;
+    private boolean isPaused = false;
+
+    public boolean getPaused() {
+        return isPaused;
+    }
 
     public interface ObjectiveListener {
         void objectiveReached(Objective objective);
@@ -43,6 +48,10 @@ public class GameView extends SurfaceView {
     public static GameView getInstance(final Context context, final ObjectiveListener objectiveListener) {
         if (instance != null) instance.stop();
         instance = new GameView(context, objectiveListener);
+        return instance;
+    }
+
+    public static GameView getInstance(){
         return instance;
     }
 
@@ -144,6 +153,7 @@ public class GameView extends SurfaceView {
 
             previousTime = currentTime;
 
+            if (isPaused) continue;
             for (int i = 0; i < objects.size(); i++) {
                 GameObject object = objects.get(i);
                 if (object instanceof PhysicsObject) {
@@ -166,6 +176,7 @@ public class GameView extends SurfaceView {
         Paint white = new Paint();
         white.setColor(Color.WHITE);
         while (isRunning) {
+            if (isPaused) continue;
             if (!surfaceHolder.getSurface().isValid())
                 continue;
             Canvas canvas = surfaceHolder.lockCanvas();
@@ -182,5 +193,13 @@ public class GameView extends SurfaceView {
 
     public void stop() {
         isRunning = false;
+    }
+
+    public void pause(){
+        isPaused = true;
+    }
+    public void play(){
+        isPaused = false;
+        Log.d("RUN", isPaused + " " + isRunning);
     }
 }

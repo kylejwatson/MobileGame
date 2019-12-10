@@ -57,8 +57,6 @@ class UserFile {
                 builder.append(user.toCSV());
             if (builder.length() > 0 && builder.charAt(builder.length() - 1) == NEWLINE)
                 builder.deleteCharAt(builder.length() - 1);
-            Log.d("ID", "file dir = " + context.getFilesDir());
-            Log.d("ID", "file contents = " + builder);
             try {
                 File fp = new File(context.getFilesDir(), FILE_NAME);
                 FileWriter out = new FileWriter(fp);

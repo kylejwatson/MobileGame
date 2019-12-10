@@ -1,5 +1,6 @@
 package com.example.circuitgame;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -46,6 +48,13 @@ public class GameFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Button helpButton = view.findViewById(R.id.helpButton);
+        helpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), HelpActivity.class));
+            }
+        });
         currentScore = 0;
         scoreLabel = view.findViewById(R.id.scoreLabel);
         objectiveLabel = view.findViewById(R.id.nextText);
@@ -55,7 +64,7 @@ public class GameFragment extends Fragment {
             public void objectiveReached(Objective objective) {
                 if (currentObjective == null){
                     currentObjective = objective;
-                    objectiveLabel.setText(currentObjective.getName());
+                    objectiveLabel.setText("Collect: " + currentObjective.getName());
                     return;
                 }
                 if (!objective.equals(currentObjective)) {
@@ -69,12 +78,30 @@ public class GameFragment extends Fragment {
                     return;
                 }
                 currentObjective = objective.getNextObjective();
-                objectiveLabel.setText(currentObjective.getName());
+                objectiveLabel.setText("Collect: " + currentObjective.getName());
             }
         });
 
         FrameLayout frameLayout = view.findViewById(R.id.gameFrame);
         frameLayout.addView(gameView);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        GameView.getInstance().pause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        GameView.getInstance().play();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (!GameView.getInstance().getPaused()) GameView.getInstance().stop();
     }
 
     private void lose() {
