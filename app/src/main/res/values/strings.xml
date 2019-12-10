@@ -1,6 +1,30 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Maze Game</string>
     <string name="add_user">Add User</string>
-    <string name="username_label">Username:</string>
     <string name="select_user">Select User</string>
+    <string name="change_user">Change User</string>
+    <string name="edit_user">Edit User</string>
+    <string name="help_title">How To Play</string>
+    <string name="help_step_1">You goal is to collect all of the icons in the correct order.</string>
+    <string name="help_step_2">The name of the component will appear at the top-left of the screen and you have to collect the correct one.</string>
+    <string name="example_collect">Collect: Cell</string>
+    <string name="help_step_3">Use gravity to control the player! Have fun!</string>
+    <string name="back">Back</string>
+    <string name="example_name">Albert Einstein</string>
+    <string name="take_picture">Take Picture</string>
+    <string name="profile_picture">Profile Picture:</string>
+    <string name="pause">Pause</string>
+    <string name="quit">Quit</string>
+    <string name="you_won">You Won!</string>
+    <string name="play_again">Play Again</string>
+    <string name="main_menu">Main Menu</string>
+    <string name="play">Play</string>
+    <string name="instructions">Instructions</string>
+    <string name="username">Username:</string>
+    <string name="collect_label">Collect: <xliff:g example="Cell" id="objective">%s</xliff:g></string>
+    <string name="score_label">Score: <xliff:g example="180" id="score">%d</xliff:g></string>
+    <string name="end_score_label">You scored: <xliff:g example="180" id="score">%d</xliff:g></string>
+    <string name="score">PB: <xliff:g example="180" id="score">%d</xliff:g></string>
+    <string name="save_user">Save User</string>
+
 </resources>

@@ -3,19 +3,16 @@ package com.example.circuitgame;
 import android.content.Intent;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,11 +20,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * to handle interaction events.
- */
 public class GameFragment extends Fragment {
     private int currentScore;
     private TextView scoreLabel;
@@ -45,9 +37,7 @@ public class GameFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_game, container, false);
-
         FrameLayout frameLayout = view.findViewById(R.id.gameFrame);
         frameLayout.removeAllViews();
         return view;
@@ -93,7 +83,8 @@ public class GameFragment extends Fragment {
             public void objectiveReached(Objective objective) {
                 if (currentObjective == null) {
                     currentObjective = objective;
-                    objectiveLabel.setText("Collect: " + currentObjective.getName());
+                    objectiveLabel.setText(getString(R.string.collect_label, currentObjective.getName()));
+                    scoreLabel.setText(getString(R.string.score_label, currentScore));
                     return;
                 }
                 if (!objective.equals(currentObjective)) {
@@ -101,13 +92,13 @@ public class GameFragment extends Fragment {
                     return;
                 }
                 currentScore += 100;
-                scoreLabel.setText("Score: " + currentScore);
+                scoreLabel.setText(getString(R.string.score_label, currentScore));
                 if (objective.getNextObjective() == null) {
                     win();
                     return;
                 }
                 currentObjective = objective.getNextObjective();
-                objectiveLabel.setText("Collect: " + currentObjective.getName());
+                objectiveLabel.setText(getString(R.string.collect_label, currentObjective.getName()));
             }
         }, soundPool);
 

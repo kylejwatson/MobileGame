@@ -39,9 +39,12 @@ public class LeaderboardFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Context context = view.getContext();
         TextView winLabel = view.findViewById(R.id.winLabel);
+        Bundle args = getArguments();
+        if (args == null) return;
         winLabel.setText(getArguments().getString(TEXT_ARG));
         TextView pointLabel = view.findViewById(R.id.pointLabel);
-        pointLabel.setText("You scored: " + getArguments().getInt(POINTS_ARG));
+        pointLabel.setText(getString(R.string.end_score_label, args.getInt(POINTS_ARG)));
+
         RecyclerView recyclerView = view.findViewById(R.id.scoreList);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(new ScoreRecyclerViewAdapter(UserFile.getInstance(context).getUserList(), null));

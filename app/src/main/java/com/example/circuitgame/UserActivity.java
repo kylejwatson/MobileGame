@@ -4,13 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -66,9 +63,9 @@ public class UserActivity extends AppCompatActivity {
             if (!user.getUri().equals(Uri.EMPTY)) {
                 profileImage.setImageURI(user.getUri());
             }
-            addButton.setText("Save User");
+            addButton.setText(R.string.save_user);
             TextView title = findViewById(R.id.titleTextView);
-            title.setText("Save User");
+            title.setText(R.string.save_user);
         }
     }
 

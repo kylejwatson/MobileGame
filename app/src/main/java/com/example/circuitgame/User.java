@@ -1,6 +1,5 @@
 package com.example.circuitgame;
 
-import android.graphics.Bitmap;
 import android.net.Uri;
 
 class User{

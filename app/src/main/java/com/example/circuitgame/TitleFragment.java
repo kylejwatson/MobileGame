@@ -1,6 +1,5 @@
 package com.example.circuitgame;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,17 +16,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
 public class TitleFragment extends Fragment {
 
     private List<User> singleUser;
@@ -38,9 +30,7 @@ public class TitleFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         return inflater.inflate(R.layout.fragment_title, container, false);
     }

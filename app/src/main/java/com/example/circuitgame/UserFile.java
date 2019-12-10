@@ -20,19 +20,8 @@ class UserFile {
     private List<User> users;
     private static UserFile instance;
     private User currentUser;
-    private boolean wipe = false;
 
     private UserFile(Context context) {
-        if (wipe) {
-            File fp = new File(context.getFilesDir(), FILE_NAME);
-            try {
-                FileWriter out = new FileWriter(fp);
-                out.write("");
-                out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         users = new ArrayList<>();
         readFromFile(context);
         currentUser = getUser(context, users.size() == 0 ? 0 : users.size() - 1);
@@ -45,7 +34,8 @@ class UserFile {
 
     public class FileRunnable implements Runnable {
         private Context context;
-        public FileRunnable(Context context){
+
+        public FileRunnable(Context context) {
             this.context = context;
         }
 
@@ -83,9 +73,9 @@ class UserFile {
                 users.add(new User(line.split("" + COMMA)));
 
         } catch (FileNotFoundException e) {
-            Log.d("ID", e.getMessage());
+            Log.d("ID", e.getMessage() + "");
         } catch (IOException e) {
-            Log.d("ID", e.getMessage());
+            Log.d("ID", e.getMessage() + "");
         }
     }
 
@@ -110,7 +100,7 @@ class UserFile {
         currentUser = user;
     }
 
-    void selectCurrentUser(int i){
+    void selectCurrentUser(int i) {
         currentUser = users.get(i);
     }
 
@@ -127,6 +117,17 @@ class UserFile {
             if (users.get(i).getID() == user.getID()) {
                 users.set(i, user);
             }
+        }
+    }
+
+    private void wipeFile(Context context){
+        File fp = new File(context.getFilesDir(), FILE_NAME);
+        try {
+            FileWriter out = new FileWriter(fp);
+            out.write("");
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

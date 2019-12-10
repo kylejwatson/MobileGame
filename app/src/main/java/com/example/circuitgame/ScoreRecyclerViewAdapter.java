@@ -3,11 +3,11 @@ package com.example.circuitgame;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link User} and makes a call to the.
- */
 public class ScoreRecyclerViewAdapter extends RecyclerView.Adapter<ScoreRecyclerViewAdapter.ViewHolder> {
 
     private final List<User> users;
@@ -41,19 +37,20 @@ public class ScoreRecyclerViewAdapter extends RecyclerView.Adapter<ScoreRecycler
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final User user = users.get(position);
+        final Context context = holder.view.getContext();
         holder.username.setText(user.getUsername());
-        holder.score.setText("PB: " + user.getScore());
-        int currentID = UserFile.getInstance(holder.view.getContext()).getCurrentUser().getID();
+        holder.score.setText(context.getString(R.string.score, user.getScore()));
+        int currentID = UserFile.getInstance(context).getCurrentUser().getID();
         Runnable imageRunnable = new Runnable() {
             @Override
             public void run() {
                 if (!user.getUri().equals(Uri.EMPTY)) {
                     try {
-                        final Bitmap bitmap = MediaStore.Images.Media.getBitmap(holder.view.getContext().getContentResolver(), user.getUri());
+                        final Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), user.getUri());
                         Matrix matrix = new Matrix();
                         matrix.postRotate(90);
                         final Bitmap rotatedImg = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-                        ((Activity)holder.view.getContext()).runOnUiThread(new Runnable() {
+                        ((Activity) context).runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 holder.profile.setImageBitmap(rotatedImg);
@@ -62,8 +59,8 @@ public class ScoreRecyclerViewAdapter extends RecyclerView.Adapter<ScoreRecycler
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                }else{
-                    ((Activity)holder.view.getContext()).runOnUiThread(new Runnable() {
+                } else {
+                    ((Activity) context).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             holder.profile.setImageResource(R.drawable.prof);
