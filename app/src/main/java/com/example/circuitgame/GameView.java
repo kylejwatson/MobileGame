@@ -3,7 +3,6 @@ package com.example.circuitgame;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -23,7 +22,6 @@ import android.view.SurfaceView;
 import androidx.core.content.ContextCompat;
 
 import java.io.IOException;
-import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,7 +79,7 @@ public class GameView extends SurfaceView {
 
         levels = new ArrayList<>();
 
-        Vector2D position = new Vector2D(1050, 1600);
+        Vector2D position = new Vector2D(1050, 1400);
         DrawObject profile = getProfile(context);
 
         Level.ObjectiveEvent event = new Level.ObjectiveEvent() {
@@ -92,7 +90,6 @@ public class GameView extends SurfaceView {
                 ((Activity) context).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d("OBJ", "next: " + (objective.getNextObjective() == null));
                         objectiveListener.objectiveReached(objective);
                     }
                 });
@@ -301,6 +298,5 @@ public class GameView extends SurfaceView {
 
     public void play() {
         isPaused = false;
-        Log.d("RUN", isPaused + " " + isRunning);
     }
 }

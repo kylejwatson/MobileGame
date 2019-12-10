@@ -15,8 +15,8 @@ import java.util.List;
 
 class UserFile {
     static final char NEWLINE = '\n';
-    private static final String FILE_NAME = "users.csv";
     static final String COMMA = ",";
+    private static final String FILE_NAME = "users.csv";
     private List<User> users;
     private static UserFile instance;
     private User currentUser;

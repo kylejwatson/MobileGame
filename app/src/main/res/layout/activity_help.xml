@@ -100,7 +100,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:text="The name of the component will appear at the top of the screen and you have to collect the correct one."
+        android:text="The name of the component will appear at the top-left of the screen and you have to collect the correct one."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView4" />

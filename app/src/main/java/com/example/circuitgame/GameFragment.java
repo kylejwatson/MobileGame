@@ -77,6 +77,13 @@ public class GameFragment extends Fragment {
                 startActivity(new Intent(getContext(), HelpActivity.class));
             }
         });
+        Button quitButton = view.findViewById(R.id.quitButton);
+        quitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navController.navigate(R.id.action_gameFragment_to_titleFragment);
+            }
+        });
         currentScore = 0;
         scoreLabel = view.findViewById(R.id.scoreLabel);
         objectiveLabel = view.findViewById(R.id.nextText);
@@ -84,20 +91,17 @@ public class GameFragment extends Fragment {
         GameView gameView = GameView.getInstance(getContext(), new GameView.ObjectiveListener() {
             @Override
             public void objectiveReached(Objective objective) {
-                Log.d("ONJECTIVE", objective + " " + currentObjective);
                 if (currentObjective == null) {
                     currentObjective = objective;
                     objectiveLabel.setText("Collect: " + currentObjective.getName());
                     return;
                 }
                 if (!objective.equals(currentObjective)) {
-                    Log.d("LOSE", currentScore + "");
                     lose();
                     return;
                 }
                 currentScore += 100;
                 scoreLabel.setText("Score: " + currentScore);
-                Log.d("COLLECT", currentScore + "");
                 if (objective.getNextObjective() == null) {
                     win();
                     return;
@@ -131,7 +135,8 @@ public class GameFragment extends Fragment {
 
     private void lose() {
         soundPool.play (loseSound, 1.0f, 1.0f, 1, 0, 1);
-
+        User currentUser = UserFile.getInstance(getContext()).getCurrentUser();
+        if (currentUser.getScore() < currentScore) currentUser.setScore(currentScore);
         Bundle bundle = new Bundle();
         bundle.putString(LeaderboardFragment.TEXT_ARG, "You Lose");
         bundle.putInt(LeaderboardFragment.POINTS_ARG, currentScore);

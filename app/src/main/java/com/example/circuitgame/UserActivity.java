@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,41 +28,8 @@ public class UserActivity extends AppCompatActivity {
     public static final String EDIT_USER_EXTRA = "maze_game_user";
     private ImageView profileImage;
     private User user;
+    private Uri imageUri = Uri.EMPTY;
 
-    Uri imageUri = Uri.EMPTY;
-    private Uri createImageFile() throws IOException {
-        String timeStamp =
-                new SimpleDateFormat("yyyyMMdd_HHmmss",
-                        Locale.getDefault()).format(new Date());
-        String imageFileName = "IMG_" + timeStamp + "_";
-        File storageDir =
-                getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        return FileProvider.getUriForFile(this,"com.example.circuitgame.fileprovider", image);
-    }
-
-    private void openCameraIntent() {
-        Intent pictureIntent = new Intent(
-                MediaStore.ACTION_IMAGE_CAPTURE);
-        if(pictureIntent.resolveActivity(getPackageManager()) != null){
-            try {
-                imageUri = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-            }
-            if (imageUri != null) {
-                pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                        imageUri);
-                startActivityForResult(pictureIntent,
-                        REQUEST_CAPTURE_IMAGE);
-            }
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,18 +67,17 @@ public class UserActivity extends AppCompatActivity {
                 profileImage.setImageURI(user.getUri());
             }
             addButton.setText("Save User");
+            TextView title = findViewById(R.id.titleTextView);
+            title.setText("Save User");
         }
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode,
-                                    Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CAPTURE_IMAGE) {
-            //don't compare the data to null, it will always come as  null because we are providing a file URI, so load with the imageFilePath we obtained before opening the cameraIntent
             profileImage.setImageURI(imageUri);
             user.setUri(imageUri);
-            // If you are using Glide.
         }
     }
 
@@ -118,5 +85,31 @@ public class UserActivity extends AppCompatActivity {
     protected void onStop() {
         UserFile.getInstance(this).saveToFile(this);
         super.onStop();
+    }
+
+    private Uri createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "IMG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName,"jpg", storageDir);
+        return FileProvider.getUriForFile(this,"com.example.circuitgame.fileprovider", image);
+    }
+
+    private void openCameraIntent() {
+        Intent pictureIntent = new Intent(
+                MediaStore.ACTION_IMAGE_CAPTURE);
+        if(pictureIntent.resolveActivity(getPackageManager()) != null){
+            try {
+                imageUri = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+            }
+            if (imageUri != null) {
+                pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                        imageUri);
+                startActivityForResult(pictureIntent,
+                        REQUEST_CAPTURE_IMAGE);
+            }
+        }
     }
 }
