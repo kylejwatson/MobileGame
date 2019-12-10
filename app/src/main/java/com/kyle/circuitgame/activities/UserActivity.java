@@ -93,7 +93,7 @@ public class UserActivity extends AppCompatActivity {
         String imageFileName = "IMG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(imageFileName,"jpg", storageDir);
-        return FileProvider.getUriForFile(this,"com.example.circuitgame.fileprovider", image);
+        return FileProvider.getUriForFile(this,"com.kyle.circuitgame.fileprovider", image);
     }
 
     private void openCameraIntent() {
