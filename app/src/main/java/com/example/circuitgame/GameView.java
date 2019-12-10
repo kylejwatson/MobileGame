@@ -141,8 +141,38 @@ public class GameView extends SurfaceView {
         character = new PhysicsObject(profile, position.multiply(0.5f), 0.1f, 0.5f);
         level2.addPhysicsObject(character);
 
+        Level level3 = new Level(Color.RED, event, gravity);
+        level3.addWall(Vector2D.ZERO, 10, position.y);
+        level3.addWall(Vector2D.ZERO, position.x, 10);
+        level3.addWall(new Vector2D(position.x, 0), 10, position.y);
+        level3.addWall(new Vector2D(0, position.y), position.x, 10);
+
+        level3.addWall(new Vector2D(0, position.y / 2 - 3 * gap), 6 * gap, 10);
+        level3.addWall(new Vector2D(0, position.y / 2 + 3 * gap), 6 * gap, 10);
+        level3.addWall(new Vector2D(6 * gap, position.y / 2 - 3 * gap), 10, 2.5f * gap);
+        level3.addWall(new Vector2D(6 * gap, position.y / 2 + 0.5f * gap), 10, 2.5f * gap);
+
+        level3.addWall(new Vector2D(gap * 5, position.y / 2 - 2 * gap), 10, 4 * gap);
+        level3.addWall(new Vector2D(gap, position.y / 2 - 2 * gap), 4 * gap, 10);
+        level3.addWall(new Vector2D(gap, position.y / 2 + 2 * gap), 4 * gap, 10);
+        level3.addWall(new Vector2D(gap, position.y / 2 - 2 * gap), 10, 1.5f * gap);
+        level3.addWall(new Vector2D(gap, position.y / 2 + 0.5f * gap), 10, 1.5f * gap);
+
+        level3.addWall(new Vector2D(gap * 2, position.y / 2 - gap), 10, 2 * gap);
+        level3.addWall(new Vector2D(gap * 2, position.y / 2 - gap), 2 * gap, 10);
+        level3.addWall(new Vector2D(gap * 2, position.y / 2 + gap), 2 * gap, 10);
+        level3.addWall(new Vector2D(gap * 4, position.y / 2 - gap), 10, 0.5f * gap);
+        level3.addWall(new Vector2D(gap * 4, position.y / 2 + 0.5f * gap), 10, 0.5f * gap);
+
+        character = new PhysicsObject(profile, new Vector2D(gap * 3, position.y / 2), 0.1f, 0.5f);
+        level3.addObjective("Bulb", new DrawObject(ContextCompat.getDrawable(context, R.drawable.bulb)), new Vector2D(gap * 3, position.y - gap));
+        level3.addObjective("Switch", new DrawObject(ContextCompat.getDrawable(context, R.drawable.switchoff)),new Vector2D(gap * 3, position.y / 2 + 1.5f * gap - 50));
+        level3.addObjective("Cell", new DrawObject(ContextCompat.getDrawable(context, R.drawable.battery)), new Vector2D(gap * 3, position.y / 2 + 2.5f * gap - 50));
+        level3.addPhysicsObject(character);
+
         levels.add(level1);
         levels.add(level2);
+        levels.add(level3);
 
         level1.loadLevel(objects);
         objectiveListener.objectiveReached(level1.getFirstObjective());

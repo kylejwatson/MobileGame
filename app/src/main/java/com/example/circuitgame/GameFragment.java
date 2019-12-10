@@ -84,6 +84,7 @@ public class GameFragment extends Fragment {
         GameView gameView = GameView.getInstance(getContext(), new GameView.ObjectiveListener() {
             @Override
             public void objectiveReached(Objective objective) {
+                Log.d("ONJECTIVE", objective + " " + currentObjective);
                 if (currentObjective == null) {
                     currentObjective = objective;
                     objectiveLabel.setText("Collect: " + currentObjective.getName());
