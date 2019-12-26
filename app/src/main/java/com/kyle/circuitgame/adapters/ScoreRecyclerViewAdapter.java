@@ -34,7 +34,7 @@ public class ScoreRecyclerViewAdapter extends RecyclerView.Adapter<ScoreRecycler
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.cell_score, parent, false);
+                .inflate(R.layout.item_score, parent, false);
         return new ViewHolder(view, userClickListener);
     }
 
@@ -93,9 +93,9 @@ public class ScoreRecyclerViewAdapter extends RecyclerView.Adapter<ScoreRecycler
         ViewHolder(View view, UserClickListener userClickListener) {
             super(view);
             this.view = view;
-            username = view.findViewById(R.id.userName);
-            score = view.findViewById(R.id.score);
-            profile = view.findViewById(R.id.userProfileImage);
+            username = view.findViewById(R.id.item_score_tv_name);
+            score = view.findViewById(R.id.item_score_tv_score);
+            profile = view.findViewById(R.id.item_score_img_profile);
             this.userClickListener = userClickListener;
             view.setOnClickListener(this);
         }

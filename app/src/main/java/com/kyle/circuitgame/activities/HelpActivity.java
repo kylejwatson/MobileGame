@@ -15,7 +15,7 @@ public class HelpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help);
 
-        Button backButton = findViewById(R.id.backButton);
+        Button backButton = findViewById(R.id.activity_help_btn_back);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

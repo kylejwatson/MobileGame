@@ -10,7 +10,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/scoreLabel"
+        android:id="@+id/fragment_game_tv_score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -22,17 +22,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
-        android:id="@+id/gameFrame"
+        android:id="@+id/fragment_game_frame"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/quitButton"/>
+        app:layout_constraintTop_toBottomOf="@+id/fragment_game_btn_quit"/>
 
     <Button
-        android:id="@+id/helpButton"
+        android:id="@+id/fragment_game_btn_help"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -43,7 +43,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/nextText"
+        android:id="@+id/fragment_game_tv_next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -51,11 +51,11 @@
         android:layout_marginBottom="16dp"
         android:text="@string/example_collect"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintBottom_toTopOf="@+id/gameFrame"
+        app:layout_constraintBottom_toTopOf="@+id/fragment_game_frame"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/quitButton"
+        android:id="@+id/fragment_game_btn_quit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -63,15 +63,15 @@
         android:layout_marginRight="16dp"
         android:text="@string/quit"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/helpButton" />
+        app:layout_constraintTop_toBottomOf="@+id/fragment_game_btn_help" />
 
     <TextView
-        android:id="@+id/titleText"
+        android:id="@+id/fragment_game_tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintBottom_toTopOf="@+id/gameFrame"
+        app:layout_constraintBottom_toTopOf="@+id/fragment_game_frame"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

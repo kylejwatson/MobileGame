@@ -45,7 +45,7 @@ public class GameFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_game, container, false);
-        FrameLayout frameLayout = view.findViewById(R.id.gameFrame);
+        FrameLayout frameLayout = view.findViewById(R.id.fragment_game_frame);
         frameLayout.removeAllViews();
         return view;
     }
@@ -67,14 +67,14 @@ public class GameFragment extends Fragment {
         }
         winSound = soundPool.load(getContext(), R.raw.win, 1);
         loseSound = soundPool.load(getContext(), R.raw.losew, 1);
-        Button helpButton = view.findViewById(R.id.helpButton);
+        Button helpButton = view.findViewById(R.id.fragment_game_btn_help);
         helpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getContext(), HelpActivity.class));
             }
         });
-        Button quitButton = view.findViewById(R.id.quitButton);
+        Button quitButton = view.findViewById(R.id.fragment_game_btn_quit);
         quitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,8 +82,8 @@ public class GameFragment extends Fragment {
             }
         });
         currentScore = 0;
-        scoreLabel = view.findViewById(R.id.scoreLabel);
-        objectiveLabel = view.findViewById(R.id.nextText);
+        scoreLabel = view.findViewById(R.id.fragment_game_tv_score);
+        objectiveLabel = view.findViewById(R.id.fragment_game_tv_next);
         navController = Navigation.findNavController(view);
         GameView gameView = GameView.getInstance(getContext(), new GameView.ObjectiveListener() {
             @Override
@@ -109,7 +109,7 @@ public class GameFragment extends Fragment {
             }
         }, soundPool);
 
-        FrameLayout frameLayout = view.findViewById(R.id.gameFrame);
+        FrameLayout frameLayout = view.findViewById(R.id.fragment_game_frame);
         frameLayout.addView(gameView);
     }
 

@@ -7,7 +7,7 @@
     tools:context=".activities.ChangeUserActivity">
 
     <TextView
-        android:id="@+id/titleText"
+        android:id="@+id/activity_change_tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/userList"
+        android:id="@+id/activity_change_rv_user"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
@@ -27,34 +27,34 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/selectButton"
+        app:layout_constraintBottom_toTopOf="@+id/activity_change_btn_select"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleText"
-        tools:listitem="@layout/cell_score" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_change_tv_title"
+        tools:listitem="@layout/item_score" />
 
     <Button
-        android:id="@+id/selectButton"
+        android:id="@+id/activity_change_btn_select"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:text="@string/select_user"
-        app:layout_constraintBottom_toTopOf="@+id/editButton"
+        app:layout_constraintBottom_toTopOf="@+id/activity_change_btn_edit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/editButton"
+        android:id="@+id/activity_change_btn_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:text="@string/edit_user"
-        app:layout_constraintBottom_toTopOf="@+id/addButton"
+        app:layout_constraintBottom_toTopOf="@+id/activity_change_btn_add"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/addButton"
+        android:id="@+id/activity_change_btn_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

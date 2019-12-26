@@ -8,7 +8,7 @@
     android:orientation="horizontal">
 
     <ImageView
-        android:id="@+id/userProfileImage"
+        android:id="@+id/item_score_img_profile"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginStart="8dp"
@@ -18,10 +18,11 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/prof" />
+        app:srcCompat="@drawable/prof"
+        android:contentDescription="@string/profile_pic_desc" />
 
     <TextView
-        android:id="@+id/userName"
+        android:id="@+id/item_score_tv_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -31,12 +32,12 @@
         android:text="@string/example_name"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/score"
-        app:layout_constraintStart_toEndOf="@+id/userProfileImage"
+        app:layout_constraintEnd_toStartOf="@+id/item_score_tv_score"
+        app:layout_constraintStart_toEndOf="@+id/item_score_img_profile"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/score"
+        android:id="@+id/item_score_tv_score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"

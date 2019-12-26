@@ -7,7 +7,7 @@
     tools:context=".activities.HelpActivity">
 
     <TextView
-        android:id="@+id/titleText"
+        android:id="@+id/activity_help_tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/helpText"
+        android:id="@+id/activity_help_tv_step1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -29,21 +29,22 @@
         android:text="@string/help_step_1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/titleText" />
+        app:layout_constraintTop_toBottomOf="@id/activity_help_tv_title" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/activity_help_img_cell"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/helpText"
-        app:srcCompat="@drawable/battery" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_help_tv_step1"
+        app:srcCompat="@drawable/battery"
+        android:contentDescription="@string/cell_icon" />
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/activity_help_img_bulb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -51,23 +52,25 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        app:layout_constraintEnd_toStartOf="@+id/imageView4"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
-        app:layout_constraintTop_toBottomOf="@+id/helpText"
-        app:srcCompat="@drawable/bulb" />
+        app:layout_constraintEnd_toStartOf="@+id/activity_help_img_buzzer"
+        app:layout_constraintStart_toEndOf="@+id/activity_help_img_cell"
+        app:layout_constraintTop_toBottomOf="@+id/activity_help_tv_step1"
+        app:srcCompat="@drawable/bulb"
+        android:contentDescription="@string/bulb_icon" />
 
     <ImageView
-        android:id="@+id/imageView4"
+        android:id="@+id/activity_help_img_buzzer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/helpText"
-        app:srcCompat="@drawable/buzzer" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_help_tv_step1"
+        app:srcCompat="@drawable/buzzer"
+        android:contentDescription="@string/buzzer_icon" />
 
     <ImageView
-        android:id="@+id/imageView5"
+        android:id="@+id/activity_help_img_motor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -75,24 +78,26 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        app:layout_constraintEnd_toStartOf="@+id/imageView6"
-        app:layout_constraintStart_toEndOf="@+id/imageView4"
-        app:layout_constraintTop_toBottomOf="@+id/helpText"
-        app:srcCompat="@drawable/motor" />
+        app:layout_constraintEnd_toStartOf="@+id/activity_help_img_switch"
+        app:layout_constraintStart_toEndOf="@+id/activity_help_img_buzzer"
+        app:layout_constraintTop_toBottomOf="@+id/activity_help_tv_step1"
+        app:srcCompat="@drawable/motor"
+        android:contentDescription="@string/motor_icon" />
 
     <ImageView
-        android:id="@+id/imageView6"
+        android:id="@+id/activity_help_img_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/helpText"
-        app:srcCompat="@drawable/switchoff" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_help_tv_step1"
+        app:srcCompat="@drawable/switchoff"
+        android:contentDescription="@string/switch_icon" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/activity_help_tv_step2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -103,10 +108,10 @@
         android:text="@string/help_step_2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView4" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_help_img_buzzer" />
 
     <TextView
-        android:id="@+id/nextText2"
+        android:id="@+id/activity_help_tv_example"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -114,10 +119,10 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_help_tv_step2" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/activity_help_tv_step3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -128,15 +133,15 @@
         android:text="@string/help_step_3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nextText2" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_help_tv_example" />
 
     <Button
-        android:id="@+id/backButton"
+        android:id="@+id/activity_help_btn_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/back"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_help_tv_step3" />
 </androidx.constraintlayout.widget.ConstraintLayout>

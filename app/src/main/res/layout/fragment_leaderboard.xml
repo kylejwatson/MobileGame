@@ -8,7 +8,7 @@
     tools:context=".fragments.LeaderboardFragment">
 
     <TextView
-        android:id="@+id/winLabel"
+        android:id="@+id/fragment_leader_tv_end"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -20,19 +20,19 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/pointLabel"
+        android:id="@+id/fragment_leader_tv_score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         tools:text="That Try: 180"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintBottom_toTopOf="@+id/scoreList"
+        app:layout_constraintBottom_toTopOf="@+id/fragment_leader_rv_user"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/scoreList"
+        android:id="@+id/fragment_leader_rv_user"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
@@ -42,26 +42,26 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         app:layoutManager="LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@+id/againButton"
+        app:layout_constraintBottom_toTopOf="@+id/fragment_leader_btn_again"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/winLabel"
-        tools:listitem="@layout/cell_score">
+        app:layout_constraintTop_toBottomOf="@+id/fragment_leader_tv_end"
+        tools:listitem="@layout/item_score">
 
     </androidx.recyclerview.widget.RecyclerView>
 
     <Button
-        android:id="@+id/againButton"
+        android:id="@+id/fragment_leader_btn_again"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:text="@string/play_again"
-        app:layout_constraintBottom_toTopOf="@+id/mainButton"
+        app:layout_constraintBottom_toTopOf="@+id/fragment_leader_btn_menu"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/mainButton"
+        android:id="@+id/fragment_leader_btn_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"

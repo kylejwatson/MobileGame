@@ -42,18 +42,18 @@ public class LeaderboardFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Context context = view.getContext();
-        TextView winLabel = view.findViewById(R.id.winLabel);
+        TextView winLabel = view.findViewById(R.id.fragment_leader_tv_end);
         Bundle args = getArguments();
         if (args == null) return;
         winLabel.setText(getArguments().getString(TEXT_ARG));
-        TextView pointLabel = view.findViewById(R.id.pointLabel);
+        TextView pointLabel = view.findViewById(R.id.fragment_leader_tv_score);
         pointLabel.setText(getString(R.string.end_score_label, args.getInt(POINTS_ARG)));
 
-        RecyclerView recyclerView = view.findViewById(R.id.scoreList);
+        RecyclerView recyclerView = view.findViewById(R.id.fragment_leader_rv_user);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(new ScoreRecyclerViewAdapter(UserFile.getInstance(context).getUserList(), null));
         final NavController navController = Navigation.findNavController(view);
-        Button playAgain = view.findViewById(R.id.againButton);
+        Button playAgain = view.findViewById(R.id.fragment_leader_btn_again);
         playAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,7 +61,7 @@ public class LeaderboardFragment extends Fragment {
             }
         });
 
-        Button mainMenu = view.findViewById(R.id.mainButton);
+        Button mainMenu = view.findViewById(R.id.fragment_leader_btn_menu);
         mainMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

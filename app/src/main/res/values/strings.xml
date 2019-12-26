@@ -26,5 +26,12 @@
     <string name="end_score_label">You scored: <xliff:g example="180" id="score">%d</xliff:g></string>
     <string name="score">PB: <xliff:g example="180" id="score">%d</xliff:g></string>
     <string name="save_user">Save User</string>
+    <string name="profile_pic_desc">The users selected/uploaded profile picture.</string>
+    <string name="cell_icon">Cell icon</string>
+    <string name="bulb_icon">Bulb icon</string>
+    <string name="buzzer_icon">Buzzer icon</string>
+    <string name="motor_icon">Motor icon</string>
+    <string name="switch_icon">Switch icon</string>
+    <string name="character_desc">A cartoon professor.</string>
 
 </resources>

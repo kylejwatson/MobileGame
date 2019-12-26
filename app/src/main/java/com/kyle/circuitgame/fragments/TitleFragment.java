@@ -48,14 +48,14 @@ public class TitleFragment extends Fragment {
         final Context context = getContext();
         if (context == null) return;
         singleUser = new ArrayList<>();
-        RecyclerView recyclerView = view.findViewById(R.id.singleUserList);
+        RecyclerView recyclerView = view.findViewById(R.id.fragment_title_rv_user);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         adapter = new ScoreRecyclerViewAdapter(singleUser, null);
         recyclerView.setAdapter(adapter);
         displayCurrentUser();
 
         final NavController navController = Navigation.findNavController(view);
-        Button playButton = view.findViewById(R.id.playButton);
+        Button playButton = view.findViewById(R.id.fragment_title_btn_play);
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,7 +63,7 @@ public class TitleFragment extends Fragment {
             }
         });
 
-        Button changeButton = view.findViewById(R.id.changeUser);
+        Button changeButton = view.findViewById(R.id.fragment_title_btn_user);
         changeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,7 +71,7 @@ public class TitleFragment extends Fragment {
             }
         });
 
-        Button helpButton = view.findViewById(R.id.helpButton);
+        Button helpButton = view.findViewById(R.id.fragment_title_btn_help);
         helpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

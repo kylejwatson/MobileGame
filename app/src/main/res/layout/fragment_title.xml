@@ -8,7 +8,7 @@
     tools:context=".fragments.TitleFragment">
 
     <TextView
-        android:id="@+id/titleText"
+        android:id="@+id/fragment_title_tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -23,17 +23,18 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/fragment_title_img_prof"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:src="@drawable/prof"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleText" />
+        app:layout_constraintTop_toBottomOf="@+id/fragment_title_tv_title"
+        android:contentDescription="@string/character_desc" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/singleUserList"
+        android:id="@+id/fragment_title_rv_user"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -44,14 +45,14 @@
         app:layoutManager="LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/imageView"
-        tools:listitem="@layout/cell_score"
+        app:layout_constraintTop_toBottomOf="@id/fragment_title_img_prof"
+        tools:listitem="@layout/item_score"
         tools:itemCount="1">
 
     </androidx.recyclerview.widget.RecyclerView>
 
     <Button
-        android:id="@+id/playButton"
+        android:id="@+id/fragment_title_btn_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -62,10 +63,10 @@
         android:text="@string/play"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/singleUserList" />
+        app:layout_constraintTop_toBottomOf="@+id/fragment_title_rv_user" />
 
     <Button
-        android:id="@+id/changeUser"
+        android:id="@+id/fragment_title_btn_user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -76,15 +77,15 @@
         android:text="@string/change_user"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/playButton" />
+        app:layout_constraintTop_toBottomOf="@+id/fragment_title_btn_play" />
 
     <Button
-        android:id="@+id/helpButton"
+        android:id="@+id/fragment_title_btn_help"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/instructions"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/changeUser" />
+        app:layout_constraintTop_toBottomOf="@+id/fragment_title_btn_user" />
 </androidx.constraintlayout.widget.ConstraintLayout>

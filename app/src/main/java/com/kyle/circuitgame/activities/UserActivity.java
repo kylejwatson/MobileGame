@@ -41,16 +41,16 @@ public class UserActivity extends AppCompatActivity {
         final boolean edit = getIntent().getBooleanExtra(EDIT_USER_EXTRA, false);
         user = new User("No Profile");
 
-        final EditText username = findViewById(R.id.usernameText);
-        profileImage = findViewById(R.id.profileImage);
-        Button cameraButton = findViewById(R.id.cameraButton);
+        final EditText username = findViewById(R.id.activity_user_et_name);
+        profileImage = findViewById(R.id.activity_user_img_profile);
+        Button cameraButton = findViewById(R.id.activity_user_btn_cam);
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openCameraIntent();
             }
         });
-        Button addButton = findViewById(R.id.saveButton);
+        Button addButton = findViewById(R.id.activity_user_btn_save);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,7 +68,7 @@ public class UserActivity extends AppCompatActivity {
                 profileImage.setImageURI(user.getUri());
             }
             addButton.setText(R.string.save_user);
-            TextView title = findViewById(R.id.titleTextView);
+            TextView title = findViewById(R.id.activity_user_tv_title);
             title.setText(R.string.save_user);
         }
     }

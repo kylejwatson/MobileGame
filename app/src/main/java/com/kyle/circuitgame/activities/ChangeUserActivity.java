@@ -15,19 +15,20 @@ import com.kyle.circuitgame.utils.UserFile;
 
 public class ChangeUserActivity extends AppCompatActivity {
     private ScoreRecyclerViewAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_user);
 
-        Button select = findViewById(R.id.selectButton);
+        Button select = findViewById(R.id.activity_change_btn_select);
         select.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
-        Button editUser = findViewById(R.id.editButton);
+        Button editUser = findViewById(R.id.activity_change_btn_edit);
         editUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -36,7 +37,7 @@ public class ChangeUserActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        Button addUser = findViewById(R.id.addButton);
+        Button addUser = findViewById(R.id.activity_change_btn_add);
         addUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -44,7 +45,7 @@ public class ChangeUserActivity extends AppCompatActivity {
             }
         });
 
-        RecyclerView recyclerView = findViewById(R.id.userList);
+        RecyclerView recyclerView = findViewById(R.id.activity_change_rv_user);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ScoreRecyclerViewAdapter(UserFile.getInstance(this).getUserList(), new ScoreRecyclerViewAdapter.UserClickListener() {
             @Override

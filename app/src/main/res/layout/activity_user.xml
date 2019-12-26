@@ -7,7 +7,7 @@
     tools:context=".activities.UserActivity">
 
     <TextView
-        android:id="@+id/titleTextView"
+        android:id="@+id/activity_user_tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/usernameLabel"
+        android:id="@+id/activity_user_tv_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -27,10 +27,10 @@
         android:layout_marginTop="16dp"
         android:text="@string/username"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_user_tv_title" />
 
     <EditText
-        android:id="@+id/usernameText"
+        android:id="@+id/activity_user_et_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -43,43 +43,45 @@
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/usernameLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_user_tv_name"
+        android:importantForAutofill="no" />
 
     <Button
-        android:id="@+id/cameraButton"
+        android:id="@+id/activity_user_btn_cam"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:text="@string/take_picture"
-        app:layout_constraintBottom_toBottomOf="@+id/profileImage"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_user_img_profile"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/profileImage" />
+        app:layout_constraintTop_toTopOf="@+id/activity_user_img_profile" />
 
     <TextView
-        android:id="@+id/pictureLabel"
+        android:id="@+id/activity_user_tv_pic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:text="@string/profile_picture"
-        app:layout_constraintBottom_toBottomOf="@+id/profileImage"
-        app:layout_constraintEnd_toStartOf="@+id/profileImage"
-        app:layout_constraintTop_toTopOf="@+id/profileImage" />
+        app:layout_constraintBottom_toBottomOf="@+id/activity_user_img_profile"
+        app:layout_constraintEnd_toStartOf="@+id/activity_user_img_profile"
+        app:layout_constraintTop_toTopOf="@+id/activity_user_img_profile" />
 
     <ImageView
-        android:id="@+id/profileImage"
+        android:id="@+id/activity_user_img_profile"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/usernameText"
-        app:srcCompat="@drawable/prof" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_user_et_name"
+        app:srcCompat="@drawable/prof"
+        android:contentDescription="@string/profile_pic_desc" />
 
     <Button
-        android:id="@+id/saveButton"
+        android:id="@+id/activity_user_btn_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
