@@ -21,13 +21,9 @@ import com.kyle.circuitgame.R;
 import com.kyle.circuitgame.adapters.ScoreRecyclerViewAdapter;
 import com.kyle.circuitgame.utils.UserFile;
 
-/**
- * A fragment representing a list of Items.
- * <p/>
- */
 public class LeaderboardFragment extends Fragment {
-    public static final String TEXT_ARG = "win_lose_text";
-    public static final String POINTS_ARG = "win_lose_points";
+    static final String TEXT_ARG = "win_lose_text";
+    static final String POINTS_ARG = "win_lose_points";
 
     public LeaderboardFragment() {
     }
@@ -41,17 +37,18 @@ public class LeaderboardFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Context context = view.getContext();
-        TextView winLabel = view.findViewById(R.id.fragment_leader_tv_end);
         Bundle args = getArguments();
         if (args == null) return;
+        TextView winLabel = view.findViewById(R.id.fragment_leader_tv_end);
         winLabel.setText(getArguments().getString(TEXT_ARG));
         TextView pointLabel = view.findViewById(R.id.fragment_leader_tv_score);
         pointLabel.setText(getString(R.string.end_score_label, args.getInt(POINTS_ARG)));
 
+        Context context = view.getContext();
         RecyclerView recyclerView = view.findViewById(R.id.fragment_leader_rv_user);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(new ScoreRecyclerViewAdapter(UserFile.getInstance(context).getUserList(), null));
+        
         final NavController navController = Navigation.findNavController(view);
         Button playAgain = view.findViewById(R.id.fragment_leader_btn_again);
         playAgain.setOnClickListener(new View.OnClickListener() {

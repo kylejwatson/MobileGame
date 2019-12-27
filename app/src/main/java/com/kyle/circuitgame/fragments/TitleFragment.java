@@ -29,16 +29,16 @@ import java.util.List;
 
 public class TitleFragment extends Fragment {
 
-    private List<User> singleUser;
-    private ScoreRecyclerViewAdapter adapter;
+    private List<User> mSingleUser;
+    private ScoreRecyclerViewAdapter mAdapter;
+
     public TitleFragment() {
         // Required empty public constructor
     }
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_title, container, false);
     }
 
@@ -47,11 +47,11 @@ public class TitleFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         final Context context = getContext();
         if (context == null) return;
-        singleUser = new ArrayList<>();
+        mSingleUser = new ArrayList<>();
         RecyclerView recyclerView = view.findViewById(R.id.fragment_title_rv_user);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        adapter = new ScoreRecyclerViewAdapter(singleUser, null);
-        recyclerView.setAdapter(adapter);
+        mAdapter = new ScoreRecyclerViewAdapter(mSingleUser, null);
+        recyclerView.setAdapter(mAdapter);
         displayCurrentUser();
 
         final NavController navController = Navigation.findNavController(view);
@@ -86,10 +86,10 @@ public class TitleFragment extends Fragment {
         displayCurrentUser();
     }
 
-    private void displayCurrentUser(){
+    private void displayCurrentUser() {
         User currentUser = UserFile.getInstance(getContext()).getCurrentUser();
-        singleUser.clear();
-        singleUser.add(currentUser);
-        adapter.notifyDataSetChanged();
+        mSingleUser.clear();
+        mSingleUser.add(currentUser);
+        mAdapter.notifyDataSetChanged();
     }
 }

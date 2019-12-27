@@ -23,24 +23,24 @@ import java.util.List;
 
 public class ScoreRecyclerViewAdapter extends RecyclerView.Adapter<ScoreRecyclerViewAdapter.ViewHolder> {
 
-    private final List<User> users;
-    private UserClickListener userClickListener;
+    private final List<User> mUsers;
+    private UserClickListener mUserClickListener;
 
     public ScoreRecyclerViewAdapter(List<User> users, UserClickListener userClickListener) {
-        this.users = users;
-        this.userClickListener = userClickListener;
+        mUsers = users;
+        mUserClickListener = userClickListener;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_score, parent, false);
-        return new ViewHolder(view, userClickListener);
+        return new ViewHolder(view, mUserClickListener);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        final User user = users.get(position);
+        final User user = mUsers.get(position);
         final Context context = holder.view.getContext();
         holder.username.setText(user.getUsername());
         holder.score.setText(context.getString(R.string.score, user.getScore()));
@@ -79,7 +79,7 @@ public class ScoreRecyclerViewAdapter extends RecyclerView.Adapter<ScoreRecycler
 
     @Override
     public int getItemCount() {
-        return users.size();
+        return mUsers.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

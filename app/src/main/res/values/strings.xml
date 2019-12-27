@@ -33,5 +33,7 @@
     <string name="motor_icon">Motor icon</string>
     <string name="switch_icon">Switch icon</string>
     <string name="character_desc">A cartoon professor.</string>
+    <string name="win_status">You Win</string>
+    <string name="lose_status">You Lose</string>
 
 </resources>

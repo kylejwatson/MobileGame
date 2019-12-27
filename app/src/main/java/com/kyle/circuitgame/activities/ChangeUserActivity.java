@@ -14,7 +14,7 @@ import com.kyle.circuitgame.adapters.ScoreRecyclerViewAdapter;
 import com.kyle.circuitgame.utils.UserFile;
 
 public class ChangeUserActivity extends AppCompatActivity {
-    private ScoreRecyclerViewAdapter adapter;
+    private ScoreRecyclerViewAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,20 +47,20 @@ public class ChangeUserActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.activity_change_rv_user);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ScoreRecyclerViewAdapter(UserFile.getInstance(this).getUserList(), new ScoreRecyclerViewAdapter.UserClickListener() {
+        mAdapter = new ScoreRecyclerViewAdapter(UserFile.getInstance(this).getUserList(), new ScoreRecyclerViewAdapter.UserClickListener() {
             @Override
             public void userOnClick(int i) {
                 UserFile.getInstance(ChangeUserActivity.this).selectCurrentUser(i);
-                adapter.notifyDataSetChanged();
+                mAdapter.notifyDataSetChanged();
             }
         });
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(mAdapter);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        adapter.notifyDataSetChanged();
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
