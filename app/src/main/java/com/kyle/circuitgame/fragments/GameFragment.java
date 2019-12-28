@@ -92,7 +92,7 @@ public class GameFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if (!GameView.getInstance().getPaused()) GameView.getInstance().stop();
+        if (!GameView.getInstance().isPaused()) GameView.getInstance().stop();
     }
 
     private void updateObjective(Objective objective) {

@@ -6,55 +6,54 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Level {
-
-    interface ObjectiveEvent {
-        void trigger(Objective objective);
-    }
-
-    private List<GameObject> objects;
-    private Objective headObjective;
-    private Objective currentObjective;
-    private Paint wallPaint;
-    private ObjectiveEvent event;
-    private Vector2D gravity;
+    private List<GameObject> mObjects;
+    private Objective mHeadObjective;
+    private Objective mCurrentObjective;
+    private Paint mWallPaint;
+    private ObjectiveEvent mEvent;
+    private Vector2D mGravity;
 
     Level(int wallColor, ObjectiveEvent event, Vector2D gravity) {
-        objects = new ArrayList<>();
-        wallPaint = new Paint();
-        wallPaint.setColor(wallColor);
-        this.event = event;
-        this.gravity = gravity;
+        mObjects = new ArrayList<>();
+        mWallPaint = new Paint();
+        mWallPaint.setColor(wallColor);
+        mEvent = event;
+        mGravity = gravity;
     }
 
     void addObject(GameObject object) {
-        objects.add(object);
+        mObjects.add(object);
     }
 
     void addPhysicsObject(PhysicsObject object) {
-        object.setGravity(gravity);
+        object.setGravity(mGravity);
         addObject(object);
     }
 
     void addWall(Vector2D position, float width, float height) {
-        GameObject object = new PhysicsObject(new DrawObject(wallPaint, width, height), position, false);
-        objects.add(object);
+        GameObject object = new PhysicsObject(new DrawObject(mWallPaint, width, height), position, false);
+        mObjects.add(object);
     }
 
     void addObjective(String name, DrawObject drawObject, Vector2D position) {
-        Objective object = new Objective(name, drawObject, position, event);
+        Objective object = new Objective(name, drawObject, position, mEvent);
 
-        if (headObjective == null) headObjective = object;
-        if (currentObjective != null) currentObjective.setNextObjective(object);
-        currentObjective = object;
+        if (mHeadObjective == null) mHeadObjective = object;
+        if (mCurrentObjective != null) mCurrentObjective.setNextObjective(object);
+        mCurrentObjective = object;
         addObject(object);
     }
 
     Objective getFirstObjective() {
-        return headObjective;
+        return mHeadObjective;
     }
 
     void loadLevel(List<GameObject> objects) {
         objects.clear();
-        objects.addAll(this.objects);
+        objects.addAll(mObjects);
+    }
+
+    interface ObjectiveEvent {
+        void trigger(Objective objective);
     }
 }

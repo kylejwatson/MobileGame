@@ -29,84 +29,92 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameView extends SurfaceView {
+    private static GameView sInstance;
+    private boolean mIsPaused = false;
+    private List<Level> mLevels;
+    private SoundPool mSoundPool;
+    private float mPixelsToMetres;
 
-    private static GameView instance;
-    private boolean isPaused = false;
-    private List<Level> levels;
-    //    private int collisionSound;
-    private SoundPool soundPool;
+    private boolean mIsRunning = true;
+    private List<GameObject> mObjects;
 
-    public boolean getPaused() {
-        return isPaused;
-    }
-
-    public interface ObjectiveListener {
-        void objectiveReached(Objective objective);
-    }
-
-    private float pixelsToMetres;
-    private SurfaceHolder surfaceHolder;
-    private boolean isRunning = true;
-
-    private List<GameObject> objects;
-    private List<GameObject> removeObjects;
-    private Vector2D gravity;
-    private int currentLevel = 0;
+    private List<GameObject> mRemoveObjects;
+    private Vector2D mGravity;
+    private int mCurrentLevel = 0;
 
     public GameView(Context context) {
         super(context);
     }
 
     public static GameView getInstance(final Context context, final ObjectiveListener objectiveListener, SoundPool soundPool) {
-        if (instance != null) instance.stop();
-        instance = new GameView(context, objectiveListener, soundPool);
-        return instance;
+        if (sInstance != null) sInstance.stop();
+        sInstance = new GameView(context, objectiveListener, soundPool);
+        return sInstance;
     }
 
     public static GameView getInstance() {
-        return instance;
+        return sInstance;
     }
 
-    private GameView(final Context context, final ObjectiveListener objectiveListener, SoundPool soundPool) {
+    private GameView(Context context, ObjectiveListener objectiveListener, SoundPool soundPool) {
         super(context);
-        surfaceHolder = getHolder();
 
         DisplayMetrics metrics = new DisplayMetrics();
         ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        pixelsToMetres = metrics.densityDpi * 39.37008f;
+        mPixelsToMetres = metrics.densityDpi * 39.37008f;
+        mSoundPool = soundPool;
 
-        this.soundPool = soundPool;
-//        collisionSound = soundPool.load(getContext(), R.raw.foot1, 1);
-        final int pickupSound = soundPool.load(getContext(), R.raw.pickup, 1);
-
-        objects = new ArrayList<>();
-        removeObjects = new ArrayList<>();
-        gravity = Vector2D.ZERO.clone();
+        mObjects = new ArrayList<>();
+        mRemoveObjects = new ArrayList<>();
+        mGravity = Vector2D.ZERO.clone();
         attachGravitySensor(context);
+        mLevels = new ArrayList<>();
+        makeLevels(context, objectiveListener);
 
-        levels = new ArrayList<>();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                drawScene();
+            }
+        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                updateScene();
+            }
+        }).start();
+    }
 
+    private void makeLevels(final Context context, final ObjectiveListener objectiveListener) {
+        final int pickupSound = mSoundPool.load(getContext(), R.raw.pickup, 1);
         Vector2D position = new Vector2D(1050, 1400);
         DrawObject profile = getProfile(context);
-
         Level.ObjectiveEvent event = new Level.ObjectiveEvent() {
             @Override
             public void trigger(final Objective objective) {
-                removeObjects.add(objective);
-                GameView.this.soundPool.play(pickupSound, 0.5f, 0.5f, 1, 0, 1);
+                mRemoveObjects.add(objective);
+                GameView.this.mSoundPool.play(pickupSound, 0.5f, 0.5f, 1, 0, 1);
                 ((Activity) context).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         objectiveListener.objectiveReached(objective);
                     }
                 });
-                if (objective.getNextObjective() == null) {
-                    loadLevel(objective);
-                }
+                if (objective.getNextObjective() == null) loadLevel(objective);
             }
         };
+        Level level1 = makeLevel1(context, event, position, profile);
 
-        Level level1 = new Level(Color.RED, event, gravity);
+        mLevels.add(level1);
+        mLevels.add(makeLevel2(context, event, position, profile));
+        mLevels.add(makeLevel3(context, event, position, profile));
+
+        level1.loadLevel(mObjects);
+        objectiveListener.objectiveReached(level1.getFirstObjective());
+    }
+
+    private Level makeLevel1(Context context, Level.ObjectiveEvent event, Vector2D position, DrawObject profile) {
+        Level level1 = new Level(Color.RED, event, mGravity);
         level1.addWall(Vector2D.ZERO, 10, position.y);
         level1.addWall(Vector2D.ZERO, position.x, 10);
         level1.addWall(new Vector2D(position.x, 0), 10, position.y);
@@ -115,16 +123,24 @@ public class GameView extends SurfaceView {
         level1.addWall(new Vector2D(position.x / 2, position.y / 2), position.x / 4, 10);
         level1.addWall(new Vector2D((position.x * 3) / 4, position.y / 2), 10, position.y / 4);
         Drawable battery = ContextCompat.getDrawable(context, R.drawable.battery);
-        if (battery != null)
-            level1.addObjective("Cell", new DrawObject(battery), new Vector2D(position.x * 0.2f, position.y * 0.8f));
+        if (battery != null) {
+            level1.addObjective("Cell", new DrawObject(battery),
+                    new Vector2D(position.x * 0.2f, position.y * 0.8f));
+        }
         Drawable bulb = ContextCompat.getDrawable(context, R.drawable.bulb);
-        if (bulb != null)
-            level1.addObjective("Bulb", new DrawObject(bulb), new Vector2D((position.x * 5) / 8, (position.y * 5) / 8));
-        PhysicsObject character = new PhysicsObject(profile, new Vector2D((position.x * 5) / 8, position.y / 4), 0.5f, 0.5f);
+        if (bulb != null) {
+            level1.addObjective("Bulb", new DrawObject(bulb),
+                    new Vector2D((position.x * 5) / 8, (position.y * 5) / 8));
+        }
+        PhysicsObject character = new PhysicsObject(profile,
+                new Vector2D((position.x * 5) / 8, position.y / 4), 0.5f, 0.5f);
         level1.addPhysicsObject(character);
+        return level1;
+    }
 
+    private Level makeLevel2(Context context, Level.ObjectiveEvent event, Vector2D position, DrawObject profile) {
         int gap = 150;
-        Level level2 = new Level(Color.RED, event, gravity);
+        Level level2 = new Level(Color.RED, event, mGravity);
         level2.addWall(Vector2D.ZERO, 10, position.y);
         level2.addWall(Vector2D.ZERO, position.x, 10);
         level2.addWall(new Vector2D(position.x, 0), 10, position.y);
@@ -144,18 +160,29 @@ public class GameView extends SurfaceView {
         level2.addWall(new Vector2D(position.x / 2 + gap * 2, position.y / 2 + gap), position.x / 2 - gap * 2, 10);
 
         Drawable motor = ContextCompat.getDrawable(context, R.drawable.motor);
-        if (motor != null)
-            level2.addObjective("Motor", new DrawObject(motor), position.multiply(0.5f).plus(new Vector2D(-gap * 2, -gap * 2)));
+        if (motor != null) {
+            level2.addObjective("Motor", new DrawObject(motor),
+                    position.multiply(0.5f).plus(new Vector2D(-gap * 2, -gap * 2)));
+        }
         Drawable switchoff = ContextCompat.getDrawable(context, R.drawable.switchoff);
-        if (switchoff != null)
-            level2.addObjective("Switch", new DrawObject(switchoff), position.multiply(0.5f).plus(new Vector2D(gap * 2, gap * 2)));
+        if (switchoff != null) {
+            level2.addObjective("Switch", new DrawObject(switchoff),
+                    position.multiply(0.5f).plus(new Vector2D(gap * 2, gap * 2)));
+        }
         Drawable buzzer = ContextCompat.getDrawable(context, R.drawable.buzzer);
-        if (buzzer != null)
-            level2.addObjective("Buzzer", new DrawObject(buzzer), position.multiply(0.5f).plus(new Vector2D(-gap * 2, gap * 2)));
-        character = new PhysicsObject(profile, position.multiply(0.5f), 0.1f, 0.5f);
+        if (buzzer != null) {
+            level2.addObjective("Buzzer", new DrawObject(buzzer),
+                    position.multiply(0.5f).plus(new Vector2D(-gap * 2, gap * 2)));
+        }
+        PhysicsObject character = new PhysicsObject(profile,
+                position.multiply(0.5f), 0.1f, 0.5f);
         level2.addPhysicsObject(character);
+        return level2;
+    }
 
-        Level level3 = new Level(Color.RED, event, gravity);
+    private Level makeLevel3(Context context, Level.ObjectiveEvent event, Vector2D position, DrawObject profile) {
+        int gap = 150;
+        Level level3 = new Level(Color.RED, event, mGravity);
         level3.addWall(Vector2D.ZERO, 10, position.y);
         level3.addWall(Vector2D.ZERO, position.x, 10);
         level3.addWall(new Vector2D(position.x, 0), 10, position.y);
@@ -178,66 +205,64 @@ public class GameView extends SurfaceView {
         level3.addWall(new Vector2D(gap * 4, position.y / 2 - gap), 10, 0.5f * gap);
         level3.addWall(new Vector2D(gap * 4, position.y / 2 + 0.5f * gap), 10, 0.5f * gap);
 
-        character = new PhysicsObject(profile, new Vector2D(gap * 3, position.y / 2), 0.1f, 0.5f);
-        if (bulb != null)
-            level3.addObjective("Bulb", new DrawObject(bulb), new Vector2D(gap * 3, position.y - gap));
-        if (switchoff != null)
-            level3.addObjective("Switch", new DrawObject(switchoff), new Vector2D(gap * 3, position.y / 2 + 1.5f * gap - 50));
-        if (battery != null)
-            level3.addObjective("Cell", new DrawObject(battery), new Vector2D(gap * 3, position.y / 2 + 2.5f * gap - 50));
+        PhysicsObject character = new PhysicsObject(profile,
+                new Vector2D(gap * 3, position.y / 2), 0.1f, 0.5f);
+        Drawable bulb = ContextCompat.getDrawable(context, R.drawable.bulb);
+        if (bulb != null) {
+            level3.addObjective("Bulb", new DrawObject(bulb),
+                    new Vector2D(gap * 3, position.y - gap));
+        }
+        Drawable switchoff = ContextCompat.getDrawable(context, R.drawable.switchoff);
+        if (switchoff != null) {
+            level3.addObjective("Switch", new DrawObject(switchoff),
+                    new Vector2D(gap * 3, position.y / 2 + 1.5f * gap - 50));
+        }
+        Drawable battery = ContextCompat.getDrawable(context, R.drawable.battery);
+        if (battery != null) {
+            level3.addObjective("Cell", new DrawObject(battery),
+                    new Vector2D(gap * 3, position.y / 2 + 2.5f * gap - 50));
+        }
         level3.addPhysicsObject(character);
+        return level3;
+    }
 
-        levels.add(level1);
-        levels.add(level2);
-        levels.add(level3);
-
-        level1.loadLevel(objects);
-        objectiveListener.objectiveReached(level1.getFirstObjective());
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                drawScene();
-            }
-        }).start();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                updateScene();
-            }
-        }).start();
+    public boolean isPaused() {
+        return mIsPaused;
     }
 
     private void loadLevel(Objective objective) {
-        if (currentLevel < levels.size() - 1) {
-            currentLevel++;
-            levels.get(currentLevel).loadLevel(objects);
-            objective.setNextObjective(levels.get(currentLevel).getFirstObjective());
-        } else {
+        if (mCurrentLevel >= mLevels.size() - 1) {
             stop();
+            return;
         }
+        mCurrentLevel++;
+        mLevels.get(mCurrentLevel).loadLevel(mObjects);
+        objective.setNextObjective(mLevels.get(mCurrentLevel).getFirstObjective());
     }
 
     private DrawObject getProfile(Context context) {
         Bitmap bitmap = null;
         try {
-            bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), UserFile.getInstance(context).getCurrentUser().getUri());
+            bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(),
+                    UserFile.getInstance(context).getCurrentUser().getUri());
         } catch (IOException e) {
             e.printStackTrace();
         }
         Matrix matrix = new Matrix();
         if (bitmap == null) {
-            BitmapDrawable drawable = (BitmapDrawable) ContextCompat.getDrawable(context, R.drawable.prof);
-            if (drawable != null)
-                bitmap = drawable.getBitmap();
-        } else
-            matrix.postRotate(90);
+            BitmapDrawable drawable =
+                    (BitmapDrawable) ContextCompat.getDrawable(context, R.drawable.prof);
+            if (drawable != null) bitmap = drawable.getBitmap();
+        } else matrix.postRotate(90);
+
         if (bitmap == null) {
             bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ALPHA_8);
         }
-        final Bitmap rotatedImg = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-        return new DrawObject(Bitmap.createScaledBitmap(rotatedImg, 100, 100, true));
+
+        final Bitmap rotatedImg = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+                bitmap.getHeight(), matrix, true);
+        return new DrawObject(Bitmap.createScaledBitmap(
+                rotatedImg, 100, 100, true));
     }
 
     private void attachGravitySensor(Context context) {
@@ -248,8 +273,8 @@ public class GameView extends SurfaceView {
         sensorManager.registerListener(new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent event) {
-                gravity.x = -event.values[0];
-                gravity.y = event.values[1];
+                mGravity.x = -event.values[0];
+                mGravity.y = event.values[1];
             }
 
             @Override
@@ -261,69 +286,56 @@ public class GameView extends SurfaceView {
 
     private void updateScene() {
         long previousTime = System.currentTimeMillis();
-//        boolean isPlaying = false;
-        while (isRunning) {
+        while (mIsRunning) {
             long currentTime = System.currentTimeMillis();
             float changeInTime = (currentTime - previousTime);
-
             previousTime = currentTime;
 
-            if (isPaused) continue;
-            for (int i = 0; i < objects.size(); i++) {
-                GameObject object = objects.get(i);
+            if (mIsPaused) continue;
+            for (int i = 0; i < mObjects.size(); i++) {
+                GameObject object = mObjects.get(i);
                 if (!(object instanceof PhysicsObject)) continue;
                 PhysicsObject phys = ((PhysicsObject) object);
-                phys.update(pixelsToMetres * changeInTime / 1000f);
-                for (int j = 0; j < objects.size(); j++) {
-                    GameObject otherObject = objects.get(j);
+                phys.update(mPixelsToMetres * changeInTime / 1000f);
+                for (int j = 0; j < mObjects.size(); j++) {
+                    GameObject otherObject = mObjects.get(j);
                     if (j == i || !(otherObject instanceof PhysicsObject)) continue;
-                    phys.checkCollision((PhysicsObject) otherObject, pixelsToMetres * changeInTime / 1000f);
-                    //TODO reenable this when collision works properly
-//                    boolean hit = phys.checkCollision((PhysicsObject) otherObject, pixelsToMetres * changeInTime / 1000f);
-//                    if (hit && !isPlaying) {
-//                        soundPool.play(collisionSound, 0.2f, 0.2f, 1, 0, 1);
-//                        isPlaying = true;
-//                    } else {
-//                        isPlaying = hit;
-//                    }
+                    phys.checkCollision((PhysicsObject) otherObject, mPixelsToMetres * changeInTime / 1000f);
                 }
-
             }
-            for (int i = 0; i < removeObjects.size(); i++) {
-                objects.remove(removeObjects.get(i));
-            }
-            removeObjects.clear();
+            for (int i = 0; i < mRemoveObjects.size(); i++) mObjects.remove(mRemoveObjects.get(i));
+            mRemoveObjects.clear();
         }
     }
 
     private void drawScene() {
         Paint white = new Paint();
         white.setColor(Color.WHITE);
-        while (isRunning) {
-            if (isPaused) continue;
-            if (!surfaceHolder.getSurface().isValid())
-                continue;
+        SurfaceHolder surfaceHolder = getHolder();
+        while (mIsRunning) {
+            if (mIsPaused) continue;
+            if (!surfaceHolder.getSurface().isValid()) continue;
             Canvas canvas = surfaceHolder.lockCanvas();
-            if (canvas == null)
-                continue;
+            if (canvas == null) continue;
             canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), white);
-            for (int i = 0; i < objects.size(); i++) {
-                objects.get(i).draw(canvas);
-            }
+            for (int i = 0; i < mObjects.size(); i++) mObjects.get(i).draw(canvas);
             surfaceHolder.unlockCanvasAndPost(canvas);
         }
     }
 
-
     public void stop() {
-        isRunning = false;
+        mIsRunning = false;
     }
 
     public void pause() {
-        isPaused = true;
+        mIsPaused = true;
     }
 
     public void play() {
-        isPaused = false;
+        mIsPaused = false;
+    }
+
+    public interface ObjectiveListener {
+        void objectiveReached(Objective objective);
     }
 }

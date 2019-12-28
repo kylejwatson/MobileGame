@@ -2,67 +2,59 @@ package com.kyle.circuitgame.game;
 
 class PhysicsObject extends GameObject {
     private static final float SCALE = 0.000001f;
-
-    private Vector2D gravity = Vector2D.ZERO.clone();
-    private Vector2D velocity = Vector2D.ZERO.clone();
-    private float friction;
-    private float bounciness;
-    private boolean kinematic = false;
-    private boolean isTrigger = false;
-
-    PhysicsObject(DrawObject drawObject, Vector2D position, float friction, float bounciness, Vector2D velocity) {
-        super(drawObject, position);
-        this.friction = friction / 100 + 1;
-        this.bounciness = bounciness;
-        this.velocity = velocity.clone();
-    }
+    private Vector2D mGravity = Vector2D.ZERO.clone();
+    private Vector2D mVelocity = Vector2D.ZERO.clone();
+    private float mFriction;
+    private float mBounciness;
+    private boolean mKinematic = false;
+    private boolean mTrigger = false;
 
     PhysicsObject(DrawObject drawObject, Vector2D position, float friction, float bounciness) {
         super(drawObject, position);
-        this.friction = friction / 100 + 1;
-        this.bounciness = bounciness;
+        mFriction = friction / 100 + 1;
+        mBounciness = bounciness;
     }
 
     PhysicsObject(DrawObject drawObject, Vector2D position, boolean isTrigger) {
         super(drawObject, position);
-        kinematic = true;
-        this.isTrigger = isTrigger;
+        mKinematic = true;
+        mTrigger = isTrigger;
     }
 
     void setGravity(Vector2D gravity) {
-        this.gravity = gravity;
+        mGravity = gravity;
     }
 
     void update(float changeInTime) {
-        if (kinematic) return;
-        velocity.translate(gravity.multiply(changeInTime));
-        position.translate(velocity.multiply(changeInTime * SCALE));
+        if (mKinematic) return;
+        mVelocity.translate(mGravity.multiply(changeInTime));
+        position.translate(mVelocity.multiply(changeInTime * SCALE));
     }
 
 
     private void onCollide(PhysicsObject other, float changeInTime) {
         //TODO use rect for better collision resolution
-        if (kinematic) return;
-        position.translate(new Vector2D(0, -velocity.y * SCALE * changeInTime));
+        if (mKinematic) return;
+        position.translate(new Vector2D(0, -mVelocity.y * SCALE * changeInTime));
         if (!getRect().intersect(other.getRect())) {
-            velocity.y *= -bounciness;
-            velocity.x /= friction;
+            mVelocity.y *= -mBounciness;
+            mVelocity.x /= mFriction;
             return;
         }
 
-        position.translate(new Vector2D(-velocity.x * SCALE * changeInTime, velocity.y * SCALE * changeInTime));
-        velocity.x *= -bounciness;
+        position.translate(new Vector2D(-mVelocity.x * SCALE * changeInTime, mVelocity.y * SCALE * changeInTime));
+        mVelocity.x *= -mBounciness;
         if (!getRect().intersect(other.getRect())) {
-            velocity.y /= friction;
+            mVelocity.y /= mFriction;
             return;
         }
-        position.translate(new Vector2D(0, -velocity.y * SCALE * changeInTime));
-        velocity.y *= -bounciness;
+        position.translate(new Vector2D(0, -mVelocity.y * SCALE * changeInTime));
+        mVelocity.y *= -mBounciness;
     }
 
     boolean checkCollision(PhysicsObject otherObject, float changeInTime) {
-        if (kinematic || !getRect().intersect(otherObject.getRect())) return false;
-        if (!otherObject.isTrigger) {
+        if (mKinematic || !getRect().intersect(otherObject.getRect())) return false;
+        if (!otherObject.mTrigger) {
             onCollide(otherObject, changeInTime);
             return true;
         }
@@ -76,10 +68,10 @@ class PhysicsObject extends GameObject {
 
     @Override
     public String toString() {
-        return "Pos: " + position + "\nVel: " + velocity + "\nGrav: " + gravity;
+        return "Pos: " + position + "\nVel: " + mVelocity + "\nGrav: " + mGravity;
     }
 
     float getSpeed() {
-        return velocity.length();
+        return mVelocity.length();
     }
 }
